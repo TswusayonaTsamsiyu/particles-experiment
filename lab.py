@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Generator
+from itertools import islice
 
 import cv2
 import numpy
@@ -29,6 +30,10 @@ def get_frames(path: Path):
     video.release()
 
 
+def frame_num(path: Path) -> int:
+    return int(cv2.VideoCapture(str(path)).get(cv2.CAP_PROP_FRAME_COUNT))
+
+
 def display_frame(frame: numpy.ndarray):
     frame = cv2.resize(frame, None, fx=RESIZE_FACTOR, fy=RESIZE_FACTOR)
     cv2.imshow(TITLE, frame)
@@ -37,4 +42,6 @@ def display_frame(frame: numpy.ndarray):
 
 
 if __name__ == '__main__':
-    display_frame(next(get_frames(next(get_videos()))))
+    print(frame_num((next(get_videos()))))
+    for frame in islice(get_frames(next(get_videos())), None, None, 50):
+        display_frame(frame)
