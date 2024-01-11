@@ -24,3 +24,7 @@ def iter_frames(video: cv2.VideoCapture) -> Iterable[ndarray]:
 
 def frame_num(video: cv2.VideoCapture) -> int:
     return int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+
+
+def frame_index(video: cv2.VideoCapture) -> int:
+    return int(video.get(cv2.CAP_PROP_POS_FRAMES))

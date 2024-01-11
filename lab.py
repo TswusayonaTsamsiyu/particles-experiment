@@ -4,7 +4,7 @@ from itertools import islice
 from fs import get_videos
 from viewing import display_frame
 from utils import monochrome, threshold
-from parsing import parse_video, iter_frames, frame_num
+from parsing import parse_video, iter_frames, frame_num, frame_index
 
 THRESH = 20
 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
         frames = islice(iter_frames(video), BG_FRAME, None, JUMP_FRAMES)
         bg = process_frame(next(frames))
         display_frame(bg, "Background")
-        for i, frame in enumerate(frames):
-            title = f"Frame {i}"
+        for frame in frames:
+            title = f"Frame {frame_index(video)}"
             display_frame(process_frame(frame), title)
             display_frame(frame, title)
