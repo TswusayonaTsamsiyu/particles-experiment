@@ -13,3 +13,11 @@ def threshold(frame: ndarray, thresh: int) -> ndarray:
 
 def blur(frame: ndarray, ksize: Tuple[int, int]) -> ndarray:
     return cv2.GaussianBlur(frame, ksize, 0)
+
+
+def crop(frame: ndarray, top: int, bottom: int) -> ndarray:
+    return frame[top:-bottom]
+
+
+def subtract_bg(frame: ndarray, thresh: int) -> ndarray:
+    return cv2.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(frame)

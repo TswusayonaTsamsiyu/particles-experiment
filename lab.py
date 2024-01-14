@@ -3,17 +3,18 @@ from itertools import islice
 
 from fs import get_videos
 from viewing import display_frame
-from utils import monochrome, threshold
+from image import monochrome, threshold, subtract_bg, crop, blur
 from parsing import parse_video, iter_frames, frame_num, frame_index
 
-THRESH = 20
+THRESH = 30
 
 BG_FRAME = 150
 JUMP_FRAMES = 50
 
 
 def process_frame(frame: ndarray) -> ndarray:
-    return threshold(monochrome(frame), THRESH)
+    # return subtract_bg(monochrome(frame), THRESH)
+    return threshold(blur(monochrome(crop(frame, 400, 20)), (15, 15)), THRESH)
 
 
 if __name__ == '__main__':
