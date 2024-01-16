@@ -1,8 +1,8 @@
 from numpy import ndarray
 from itertools import islice
 
-from fs import get_videos
 from viewing import display_frame
+from fs import get_bg_videos, get_rod_videos
 from image import monochrome, threshold, subtract_bg, crop, blur
 from parsing import parse_video, iter_frames, frame_num, frame_index
 
@@ -18,7 +18,7 @@ def process_frame(frame: ndarray) -> ndarray:
 
 
 if __name__ == '__main__':
-    example_path = list(get_videos())[1]
+    example_path = list(get_bg_videos())[1]
     print(f"Parsing {example_path}")
     with parse_video(example_path) as video:
         print(f"Video has {frame_num(video)} frames")
