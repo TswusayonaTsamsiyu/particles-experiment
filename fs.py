@@ -8,7 +8,7 @@ ROD_RADIATION_PATH = ROOT_PATH / "Rod"
 
 
 def is_video(path: Path) -> bool:
-    return path.suffix == ".mp4"
+    return path.suffix.lower() == ".mp4"
 
 
 def get_videos(path: Path) -> Iterable[Path]:
