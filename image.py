@@ -30,8 +30,10 @@ def adjust_brightness_contrast(frame: ndarray) -> ndarray:
 
 
 def denoise(frame: ndarray) -> ndarray:
+    # Slow...
     return cv2.fastNlMeansDenoising(frame)
 
 
 def subtract_bg(frame: ndarray, thresh: int) -> ndarray:
+    # Doesn't work...
     return cv2.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(frame)
