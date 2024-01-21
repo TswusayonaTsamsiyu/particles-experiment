@@ -1,20 +1,24 @@
 from numpy import ndarray
 from itertools import islice
 
+import image as img
 from viewing import display_frame
 from fs import get_bg_videos, get_rod_videos
-from image import monochrome, threshold, subtract_bg, crop, blur
 from parsing import parse_video, iter_frames, frame_num, frame_index
 
-THRESH = 30
+THRESH = 180
 
 BG_FRAME = 150
 JUMP_FRAMES = 50
 
+BLUR_SIZE = 11
+KSIZE = (BLUR_SIZE, BLUR_SIZE)
+
 
 def process_frame(frame: ndarray) -> ndarray:
-    # return subtract_bg(monochrome(frame), THRESH)
-    return threshold(blur(monochrome(crop(frame, 400, 20)), (15, 15)), THRESH)
+    return img.threshold(img.adjust_brightness_contrast(img.blur(
+        img.monochrome(img.crop(frame, 400, 20)), KSIZE
+    )), THRESH)
 
 
 if __name__ == '__main__':
@@ -27,5 +31,5 @@ if __name__ == '__main__':
         display_frame(bg, "Background")
         for frame in frames:
             title = f"Frame {frame_index(video)}"
-            display_frame(process_frame(frame), title)
-            display_frame(frame, title)
+            display_frame(process_frame(frame) - bg, title)
+            display_frame(img.crop(frame, 400, 20), title)
