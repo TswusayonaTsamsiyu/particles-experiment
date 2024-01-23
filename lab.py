@@ -22,7 +22,7 @@ WINDOW = 200  # frames
 
 # TODO:
 # 1. Find local BG
-# 2. Find auto threshold (maybe find max brightness of photo )
+# 2. Find auto threshold
 
 
 def prepare(frame: ndarray) -> ndarray:
