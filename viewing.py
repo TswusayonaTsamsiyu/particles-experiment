@@ -1,4 +1,5 @@
 import cv2
+import pyautogui
 from typing import Tuple
 from numpy import ndarray
 from contextlib import contextmanager
@@ -7,7 +8,7 @@ ESC = 27
 CLOSE_BTN = -1
 
 SCALE_FACTOR = 0.8
-SCREEN_SIZE = (1920, 1080)
+SCREEN_SIZE = pyautogui.size()
 
 
 def scale(dim: int) -> int:
@@ -16,7 +17,7 @@ def scale(dim: int) -> int:
 
 def resize_frame(frame: ndarray) -> ndarray:
     height, width = frame.shape
-    factor = SCREEN_SIZE[1] / height * SCALE_FACTOR
+    factor = SCREEN_SIZE.height / height * SCALE_FACTOR
     return cv2.resize(frame, None, fx=factor, fy=factor)
 
 
