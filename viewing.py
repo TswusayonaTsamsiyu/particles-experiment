@@ -20,19 +20,6 @@ def resize_frame(frame: ndarray) -> ndarray:
     return cv2.resize(frame, None, fx=factor, fy=factor)
 
 
-@contextmanager
-def show_window(title: str, image: ndarray) -> None:
-    height, width = image.shape
-    cv2.namedWindow(title, cv2.WINDOW_NORMAL)
-    cv2.imshow(title, image)
-    adjust_window(title, (width, height))
-    yield
-    try:
-        cv2.destroyWindow(title)
-    except cv2.error:
-        pass
-
-
 def adjust_window(title: str,
                   size: Tuple[int, int],
                   position: Tuple[int, int] = (0, 0)) -> None:
@@ -40,7 +27,20 @@ def adjust_window(title: str,
     cv2.moveWindow(title, *position)
 
 
+@contextmanager
+def show_window(title: str, image: ndarray) -> None:
+    cv2.namedWindow(title, cv2.WINDOW_NORMAL)
+    cv2.imshow(title, image)
+    height, width = image.shape
+    adjust_window(title, (width, height))
+    yield cv2.waitKey(0)
+    try:
+        cv2.destroyWindow(title)
+    except cv2.error:
+        pass
+
+
 def display_frame(frame: ndarray, title: str = "Frame") -> None:
-    with show_window(title, resize_frame(frame)):
-        if cv2.waitKey(0) in [ESC, CLOSE_BTN]:
+    with show_window(title, resize_frame(frame)) as key_code:
+        if key_code in [ESC, CLOSE_BTN]:
             exit()
