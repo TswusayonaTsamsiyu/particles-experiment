@@ -63,9 +63,7 @@ if __name__ == '__main__':
                 # bg = prepared
                 # bg = get_avg_bg(iter_frames(video, start=frame.index - WINDOW, stop=frame.index + WINDOW), WINDOW * 2)
                 print("Tracks detected")
-                display_frame(prepared, title)
-                display_frame(make_binary(subtracted), title)
             else:
                 print("No tracks")
-                display_frame(prepared, title)
-                display_frame(make_binary(subtracted), title)
+            display_frame(prepared, title)
+            display_frame(make_binary(subtracted), title)
