@@ -5,7 +5,7 @@ from typing import Iterable
 from functools import reduce
 
 import image as img
-from video import Video
+from video import Video, Frame
 from viewing import display_frame
 from fs import get_bg_videos, get_rod_videos
 
@@ -35,8 +35,8 @@ def make_binary(frame: ndarray) -> ndarray:
 
 
 def has_tracks(frame: ndarray) -> bool:
-    mean, std = cv2.meanStdDev(subtracted)
-    min, max = cv2.minMaxLoc(subtracted)[:2]
+    mean, std = cv2.meanStdDev(frame)
+    min, max = cv2.minMaxLoc(frame)[:2]
     return mean > 0.6 and std > 1 and max > 25
 
 
@@ -50,19 +50,18 @@ if __name__ == '__main__':
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
         frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
-        bg = prepare(next(frames))
+        bg = prepare(next(frames).pixels)
         # bg = get_avg_bg(iter_frames(video, start=BG_FRAME, stop=BG_FRAME + WINDOW), WINDOW)
-        display_frame(bg, "Background")
+        display_frame(bg, f"Background frame {BG_FRAME}")
         for frame in frames:
-            index = video._next_frame_index() - 1
-            title = f"Frame {index}"
-            prepared = prepare(frame)
+            title = f"Frame {frame.index}"
+            prepared = prepare(frame.pixels)
             subtracted = cv2.subtract(prepared, bg)
             print(f"Mean, STD: {cv2.meanStdDev(subtracted)}\nMin, Max: {cv2.minMaxLoc(subtracted)[:2]}")
             if has_tracks(subtracted):
-                # print(f"Frame {index} is the new BG")
+                # print(f"Frame {frame.index} is the new BG")
                 # bg = prepared
-                # bg = get_avg_bg(iter_frames(video, start=index - WINDOW, stop=index + WINDOW), WINDOW * 2)
+                # bg = get_avg_bg(iter_frames(video, start=frame.index - WINDOW, stop=frame.index + WINDOW), WINDOW * 2)
                 print("Tracks detected")
                 display_frame(prepared, title)
                 display_frame(make_binary(subtracted), title)
@@ -70,4 +69,3 @@ if __name__ == '__main__':
                 print("No tracks")
                 display_frame(prepared, title)
                 display_frame(make_binary(subtracted), title)
-

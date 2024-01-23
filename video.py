@@ -4,6 +4,12 @@ from numpy import ndarray
 from typing import Generator
 
 
+class Frame:
+    def __init__(self, pixels: ndarray, index: int):
+        self.pixels = pixels
+        self.index = index
+
+
 class Video:
     def __init__(self, path: Path):
         self.path = path
@@ -35,17 +41,17 @@ class Video:
     def _jump_to_frame(self, index: int) -> None:
         self._cap.set(cv2.CAP_PROP_POS_FRAMES, index)
 
-    def _read_next(self) -> ndarray:
+    def _read_next(self) -> Frame:
         success, frame = self._cap.read()
         if not success:
             raise IOError(f"Could not read frame at index {self._next_frame_index() - 1}")
-        return frame
+        return Frame(frame, self._next_frame_index() - 1)
 
     @property
-    def frame_num(self):
+    def frame_num(self) -> int:
         return self._get_prop(cv2.CAP_PROP_FRAME_COUNT)
 
-    def read_frame_at(self, index: int) -> ndarray:
+    def read_frame_at(self, index: int) -> Frame:
         original_index = self._next_frame_index()
         self._jump_to_frame(index)
         frame = self._read_next()
@@ -55,9 +61,10 @@ class Video:
     def iter_frames(self, *,
                     start: int = 0,
                     stop: int = None,
-                    jump: int = 1) -> Generator[ndarray, None, None]:
+                    jump: int = 1) -> Generator[Frame, None, None]:
         self._jump_to_frame(start)
         stop = self.frame_num if stop is None else min(stop, self.frame_num)
         while self._next_frame_index() < stop:
-            yield self._read_next()
-            self._jump_to_frame(self._next_frame_index() + jump - 1)
+            frame = self._read_next()
+            yield frame
+            self._jump_to_frame(frame.index + jump)
