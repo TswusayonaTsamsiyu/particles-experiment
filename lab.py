@@ -36,8 +36,8 @@ def make_binary(frame: ndarray) -> ndarray:
 
 def has_tracks(frame: ndarray) -> bool:
     mean, std = cv2.meanStdDev(frame)
-    min, max = cv2.minMaxLoc(frame)[:2]
-    return mean > 0.6 and std > 1 and max > 25
+    min_, max_ = cv2.minMaxLoc(frame)[:2]
+    return mean > 0.6 and std > 1 and max_ > 25
 
 
 def get_avg_bg(frames: Iterable[ndarray], window: int) -> ndarray:
