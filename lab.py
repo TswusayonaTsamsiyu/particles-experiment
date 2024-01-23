@@ -57,12 +57,10 @@ if __name__ == '__main__':
             prepared = prepare(frame.pixels)
             subtracted = cv2.subtract(prepared, bg)
             print(f"Mean, STD: {cv2.meanStdDev(subtracted)}\nMin, Max: {cv2.minMaxLoc(subtracted)[:2]}")
-            if has_tracks(subtracted):
-                # print(f"Frame {frame.index} is the new BG")
-                # bg = prepared
-                # bg = get_avg_bg(iter_frames(video, start=frame.index - WINDOW, stop=frame.index + WINDOW), WINDOW * 2)
-                print("Tracks detected")
-            else:
-                print("No tracks")
+            # if has_tracks(subtracted):
+            #     print(f"Frame {frame.index} is the new BG")
+            #     bg = prepared
+            #     bg = get_avg_bg(iter_frames(video, start=frame.index - WINDOW, stop=frame.index + WINDOW), WINDOW * 2)
+            print("Tracks detected" if has_tracks(subtracted) else "No tracks")
             display_frame(prepared, f"Prepared frame {frame.index}")
             display_frame(make_binary(subtracted), f"Binary frame {frame.index}")
