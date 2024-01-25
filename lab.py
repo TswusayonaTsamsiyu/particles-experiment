@@ -49,8 +49,9 @@ def analyze_frame(frame: Frame, bg: ndarray) -> None:
                     title=f"Prepared frame {frame.index}",
                     position=Position(0, 0))
         subtracted = cv.subtract(prepared, bg)
+        binary = make_binary(subtracted)
         print("Tracks detected" if has_tracks(subtracted) else "No tracks")
-        show_window(make_binary(subtracted),
+        show_window(binary,
                     title=f"Binary frame {frame.index}",
                     position=Position(600, 0))
 
@@ -59,7 +60,7 @@ def analyze_video(video: Video) -> None:
     frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
     bg = prepare(next(frames).pixels)
     with window_control():
-        show_window(bg, f"Background frame {BG_FRAME}")
+        show_window(bg, f"Background frame {BG_FRAME}", position=Position(0, 0))
     for frame in frames:
         analyze_frame(frame, bg)
 
