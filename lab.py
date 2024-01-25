@@ -33,7 +33,7 @@ def make_binary(frame: ndarray) -> ndarray:
 def has_tracks(frame: ndarray) -> bool:
     mean, std = cv.meanStdDev(frame)
     min_, max_ = cv.minMaxLoc(frame)[:2]
-    print(f"Mean: {mean[0][0]}, STD: {std[0][0]}, Max: {max_}")
+    print(f"Mean: {round(float(mean[0][0]), 3)}, STD: {round(float(std[0][0]), 3)}, Max: {max_}")
     return mean > 0.6 and std > 1 and max_ > 25
 
 
