@@ -5,7 +5,7 @@ from typing import Iterable
 from functools import reduce
 
 import image as img
-from video import Video
+from video import Video, Frame
 from viewing import display_frame
 from fs import get_bg_videos, get_rod_videos
 
@@ -41,17 +41,21 @@ def get_avg_bg(frames: Iterable[ndarray], window: int) -> ndarray:
     return cv2.divide(window, reduce(cv2.add, map(prepare, frames)))
 
 
+def analyze_frame(frame: Frame, bg: ndarray) -> None:
+    print(f"Processing frame {frame.index}")
+    prepared = prepare(frame.pixels)
+    display_frame(prepared, f"Prepared frame {frame.index}")
+    subtracted = cv2.subtract(prepared, bg)
+    print("Tracks detected" if has_tracks(subtracted) else "No tracks")
+    display_frame(make_binary(subtracted), f"Binary frame {frame.index}")
+
+
 def analyze_video(video: Video) -> None:
     frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
     bg = prepare(next(frames).pixels)
     display_frame(bg, f"Background frame {BG_FRAME}")
     for frame in frames:
-        print(f"Processing frame {frame.index}")
-        prepared = prepare(frame.pixels)
-        display_frame(prepared, f"Prepared frame {frame.index}")
-        subtracted = cv2.subtract(prepared, bg)
-        print("Tracks detected" if has_tracks(subtracted) else "No tracks")
-        display_frame(make_binary(subtracted), f"Binary frame {frame.index}")
+        analyze_frame(frame, bg)
 
 
 def main() -> None:
