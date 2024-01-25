@@ -6,7 +6,7 @@ from functools import reduce
 
 import image as img
 from video import Video, Frame
-from viewing import display_frame
+from viewing import window_control, show_window, Position
 from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
@@ -44,16 +44,22 @@ def get_avg_bg(frames: Iterable[ndarray], window: int) -> ndarray:
 def analyze_frame(frame: Frame, bg: ndarray) -> None:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
-    display_frame(prepared, f"Prepared frame {frame.index}")
-    subtracted = cv2.subtract(prepared, bg)
-    print("Tracks detected" if has_tracks(subtracted) else "No tracks")
-    display_frame(make_binary(subtracted), f"Binary frame {frame.index}")
+    with window_control():
+        show_window(prepared,
+                    title=f"Prepared frame {frame.index}",
+                    position=Position(0, 0))
+        subtracted = cv2.subtract(prepared, bg)
+        print("Tracks detected" if has_tracks(subtracted) else "No tracks")
+        show_window(make_binary(subtracted),
+                    title=f"Binary frame {frame.index}",
+                    position=Position(600, 0))
 
 
 def analyze_video(video: Video) -> None:
     frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
     bg = prepare(next(frames).pixels)
-    display_frame(bg, f"Background frame {BG_FRAME}")
+    with window_control():
+        show_window(bg, f"Background frame {BG_FRAME}")
     for frame in frames:
         analyze_frame(frame, bg)
 
