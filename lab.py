@@ -54,6 +54,12 @@ def analyze_frame(frame: Frame, bg: ndarray) -> None:
         show_window(binary,
                     title=f"Binary frame {frame.index}",
                     position=Position(600, 0))
+    with window_control():
+        contours, h = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        print(f"Contours:\n{contours}")
+        drawing = np.zeros((binary.shape[0], binary.shape[1], 3), dtype=np.uint8)
+        cv.drawContours(drawing, contours, -1, (0, 255, 0), 5, cv.LINE_8, h)
+        cv.imshow("Contours", drawing)
 
 
 def analyze_video(video: Video) -> None:
