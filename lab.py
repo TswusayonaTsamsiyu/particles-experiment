@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 import numpy as np
 from numpy import ndarray
 from typing import Iterable
@@ -31,14 +31,14 @@ def make_binary(frame: ndarray) -> ndarray:
 
 
 def has_tracks(frame: ndarray) -> bool:
-    mean, std = cv2.meanStdDev(frame)
-    min_, max_ = cv2.minMaxLoc(frame)[:2]
+    mean, std = cv.meanStdDev(frame)
+    min_, max_ = cv.minMaxLoc(frame)[:2]
     print(f"Mean: {mean[0][0]}, STD: {std[0][0]}, Max: {max_}")
     return mean > 0.6 and std > 1 and max_ > 25
 
 
 def get_avg_bg(frames: Iterable[ndarray], window: int) -> ndarray:
-    return cv2.divide(window, reduce(cv2.add, map(prepare, frames)))
+    return cv.divide(window, reduce(cv.add, map(prepare, frames)))
 
 
 def analyze_frame(frame: Frame, bg: ndarray) -> None:
@@ -48,7 +48,7 @@ def analyze_frame(frame: Frame, bg: ndarray) -> None:
         show_window(prepared,
                     title=f"Prepared frame {frame.index}",
                     position=Position(0, 0))
-        subtracted = cv2.subtract(prepared, bg)
+        subtracted = cv.subtract(prepared, bg)
         print("Tracks detected" if has_tracks(subtracted) else "No tracks")
         show_window(make_binary(subtracted),
                     title=f"Binary frame {frame.index}",

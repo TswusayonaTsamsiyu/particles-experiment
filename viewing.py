@@ -1,7 +1,7 @@
-import cv2
+import cv2 as cv
 import pyautogui
+from typing import Union
 from numpy import ndarray
-from typing import Tuple, Union
 from contextlib import contextmanager
 
 Image = ndarray
@@ -36,22 +36,22 @@ def show_window(image: Image,
                 size: Union[Size, SCREEN, IMAGE] = SCREEN,
                 position: Position = None) -> None:
     if size == IMAGE:
-        cv2.namedWindow(title, cv2.WINDOW_AUTOSIZE)
-        cv2.imshow(title, image)
+        cv.namedWindow(title, cv.WINDOW_AUTOSIZE)
+        cv.imshow(title, image)
     else:
-        cv2.namedWindow(title, cv2.WINDOW_NORMAL)
+        cv.namedWindow(title, cv.WINDOW_NORMAL)
         if size == SCREEN:
             size = adjust_size_to_screen(image)
-        cv2.imshow(title, cv2.resize(image, tuple(size)))
-        cv2.resizeWindow(title, *size)
+        cv.imshow(title, cv.resize(image, tuple(size)))
+        cv.resizeWindow(title, *size)
     if position:
-        cv2.moveWindow(title, *position)
+        cv.moveWindow(title, *position)
 
 
 @contextmanager
 def window_control():
     yield
-    key_code = cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    key_code = cv.waitKey(0)
+    cv.destroyAllWindows()
     if key_code in [ESC, CLOSE_BTN]:
         exit()

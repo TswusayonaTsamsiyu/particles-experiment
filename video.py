@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 from pathlib import Path
 from numpy import ndarray
 from typing import Generator
@@ -16,7 +16,7 @@ class Video:
         self._cap = None
 
     def __enter__(self):
-        self._cap = cv2.VideoCapture(str(self.path))
+        self._cap = cv.VideoCapture(str(self.path))
         if not self._cap.isOpened():
             raise IOError(f"Could not open video file at {self.path}")
         return self
@@ -36,10 +36,10 @@ class Video:
         return int(self._cap.get(prop))
 
     def _next_frame_index(self) -> int:
-        return self._get_prop(cv2.CAP_PROP_POS_FRAMES)
+        return self._get_prop(cv.CAP_PROP_POS_FRAMES)
 
     def _jump_to_frame(self, index: int) -> None:
-        self._cap.set(cv2.CAP_PROP_POS_FRAMES, index)
+        self._cap.set(cv.CAP_PROP_POS_FRAMES, index)
 
     def _read_next(self) -> Frame:
         success, frame = self._cap.read()
@@ -49,7 +49,7 @@ class Video:
 
     @property
     def frame_num(self) -> int:
-        return self._get_prop(cv2.CAP_PROP_FRAME_COUNT)
+        return self._get_prop(cv.CAP_PROP_FRAME_COUNT)
 
     def read_frame_at(self, index: int) -> Frame:
         original_index = self._next_frame_index()
