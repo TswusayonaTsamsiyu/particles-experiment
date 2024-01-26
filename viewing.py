@@ -1,18 +1,20 @@
 import cv2 as cv
-import pyautogui
 from typing import Union
 from numpy import ndarray
+from collections import namedtuple
+from screeninfo import get_monitors
 from contextlib import contextmanager
 
 Image = ndarray
-Size = pyautogui.Size
-Position = pyautogui.Point
+Position = namedtuple("Position", "x y")
+Size = namedtuple("Size", "width height")
 
 ESC = 27
 CLOSE_BTN = -1
 
 SCALE_FACTOR = 0.9
-SCREEN_SIZE = pyautogui.size()
+PRIMARY_MONITOR = next(filter(lambda m: m.is_primary, get_monitors()))
+SCREEN_SIZE = Size(PRIMARY_MONITOR.width, PRIMARY_MONITOR.height)
 SCREEN_ASPECT_RATIO = SCREEN_SIZE.width / SCREEN_SIZE.height
 
 IMAGE = "image"
