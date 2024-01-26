@@ -23,33 +23,33 @@ def get_screen_size():
     return Size(primary_monitor.width, primary_monitor.height)
 
 
-def adjust_size_to_screen(image: Image) -> Size:
+def get_image_size(image: Image) -> Size:
     height, width = image.shape
-    aspect_ratio = width / height
+    return Size(width, height)
+
+
+def get_aspect_ratio(size: Size) -> float:
+    return size.width / size.height
+
+
+def fit_to_screen(image: Image) -> Image:
+    image_size = get_image_size(image)
     screen_size = get_screen_size()
-    screen_aspect_ratio = screen_size.width / screen_size.height
-    if aspect_ratio > screen_aspect_ratio:
+    if get_aspect_ratio(image_size) > get_aspect_ratio(screen_size):
         new_width = screen_size.width * SCALE_FACTOR
-        new_height = height * new_width / width
+        new_height = image_size.height * new_width / image_size.width
     else:
         new_height = screen_size.height * SCALE_FACTOR
-        new_width = width * new_height / height
-    return Size(int(new_width), int(new_height))
+        new_width = image_size.width * new_height / image_size.height
+    return cv.resize(image, (int(new_width), int(new_height)))
 
 
 def show_window(image: Image,
                 title: str = "Image",
-                size: Union[Size, SCREEN, IMAGE] = SCREEN,
                 position: Position = None) -> None:
-    if size == IMAGE:
-        cv.namedWindow(title, cv.WINDOW_AUTOSIZE)
-        cv.imshow(title, image)
-    else:
-        cv.namedWindow(title, cv.WINDOW_NORMAL)
-        if size == SCREEN:
-            size = adjust_size_to_screen(image)
-        cv.imshow(title, cv.resize(image, tuple(size)))
-        cv.resizeWindow(title, *size)
+    cv.namedWindow(title, cv.WINDOW_NORMAL)
+    cv.imshow(title, image)
+    cv.resizeWindow(title, *get_image_size(image))
     if position:
         cv.moveWindow(title, *position)
 
