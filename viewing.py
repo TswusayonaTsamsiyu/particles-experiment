@@ -13,22 +13,26 @@ ESC = 27
 CLOSE_BTN = -1
 
 SCALE_FACTOR = 0.9
-PRIMARY_MONITOR = next(filter(lambda m: m.is_primary, get_monitors()))
-SCREEN_SIZE = Size(PRIMARY_MONITOR.width, PRIMARY_MONITOR.height)
-SCREEN_ASPECT_RATIO = SCREEN_SIZE.width / SCREEN_SIZE.height
 
 IMAGE = "image"
 SCREEN = "screen"
 
 
+def get_screen_size():
+    primary_monitor = next(filter(lambda m: m.is_primary, get_monitors()))
+    return Size(primary_monitor.width, primary_monitor.height)
+
+
 def adjust_size_to_screen(image: Image) -> Size:
     height, width = image.shape
     aspect_ratio = width / height
-    if aspect_ratio > SCREEN_ASPECT_RATIO:
-        new_width = SCREEN_SIZE.width * SCALE_FACTOR
+    screen_size = get_screen_size()
+    screen_aspect_ratio = screen_size.width / screen_size.height
+    if aspect_ratio > screen_aspect_ratio:
+        new_width = screen_size.width * SCALE_FACTOR
         new_height = height * new_width / width
     else:
-        new_height = SCREEN_SIZE.height * SCALE_FACTOR
+        new_height = screen_size.height * SCALE_FACTOR
         new_width = width * new_height / height
     return Size(int(new_width), int(new_height))
 
