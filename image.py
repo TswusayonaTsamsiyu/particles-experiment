@@ -1,7 +1,11 @@
 import cv2 as cv
 import numpy as np
-from typing import Tuple
 from numpy import ndarray
+from typing import Tuple, Sequence
+
+from utils import Color
+
+GREEN = Color(0, 255, 0)
 
 
 def monochrome(frame: ndarray) -> ndarray:
@@ -37,3 +41,11 @@ def denoise(frame: ndarray) -> ndarray:
 def subtract_bg(frame: ndarray, thresh: int) -> ndarray:
     # Doesn't work...
     return cv.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(frame)
+
+
+def draw_contours(frame: ndarray,
+                  contours: Sequence[ndarray],
+                  color: Color = GREEN,
+                  thickness: int = 2) -> ndarray:
+    rgb_copy = cv.cvtColor(frame.copy(), cv.COLOR_GRAY2BGR)
+    return cv.drawContours(rgb_copy, contours, -1, color, thickness)
