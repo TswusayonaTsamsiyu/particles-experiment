@@ -1,13 +1,8 @@
 import cv2 as cv
-from typing import Union
-from numpy import ndarray
-from collections import namedtuple
 from screeninfo import get_monitors
 from contextlib import contextmanager
 
-Image = ndarray
-Position = namedtuple("Position", "x y")
-Size = namedtuple("Size", "width height")
+from utils import Image, Size, Position
 
 ESC = 27
 CLOSE_BTN = -1

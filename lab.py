@@ -1,10 +1,10 @@
 import cv2 as cv
 import numpy as np
-from numpy import ndarray
 from typing import Iterable
 from functools import reduce
 
 import image as img
+from utils import Image
 from video import Video, Frame
 from viewing import window_control, show_window, Position, fit_to_screen
 from fs import get_bg_videos, get_rod_videos
@@ -21,27 +21,27 @@ KSIZE = (BLUR_SIZE, BLUR_SIZE)
 # 2. Find auto threshold
 
 
-def prepare(frame: ndarray) -> ndarray:
+def prepare(frame: Image) -> Image:
     return img.blur(img.monochrome(frame), KSIZE)
 
 
-def make_binary(frame: ndarray) -> ndarray:
+def make_binary(frame: Image) -> Image:
     return img.threshold(frame, np.std(frame) * 5)
     # return img.blur(img.threshold(img.adjust_brightness_contrast(frame)), KSIZE)
 
 
-def has_tracks(frame: ndarray) -> bool:
+def has_tracks(frame: Image) -> bool:
     mean, std = cv.meanStdDev(frame)
     min_, max_ = cv.minMaxLoc(frame)[:2]
     print(f"Mean: {round(float(mean[0][0]), 3)}, STD: {round(float(std[0][0]), 3)}, Max: {max_}")
     return mean > 0.6 and std > 1 and max_ > 25
 
 
-def get_avg_bg(frames: Iterable[ndarray], window: int) -> ndarray:
+def get_avg_bg(frames: Iterable[Image], window: int) -> Image:
     return cv.divide(window, reduce(cv.add, map(prepare, frames)))
 
 
-def analyze_frame(frame: Frame, bg: ndarray) -> None:
+def analyze_frame(frame: Frame, bg: Image) -> None:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
     with window_control():

@@ -11,7 +11,7 @@ def monochrome(frame: ndarray) -> ndarray:
 def threshold(frame: ndarray, thresh: int = None) -> ndarray:
     if thresh:
         return cv.threshold(frame, thresh, 255, cv.THRESH_BINARY)[1]
-    return cv.threshold(frame, 0, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)[1]
+    return cv.threshold(frame, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)[1]
 
 
 def blur(frame: ndarray, ksize: Tuple[int, int]) -> ndarray:
