@@ -19,7 +19,7 @@ def get_screen_size():
 
 
 def get_image_size(image: Image) -> Size:
-    height, width = image.shape
+    height, width, *channels = image.shape
     return Size(width, height)
 
 

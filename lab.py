@@ -56,7 +56,9 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
                     position=Position(600, 0))
     with window_control():
         contours = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]
-        cv.imshow("Contours", img.draw_contours(binary, contours))
+        show_window(fit_to_screen(img.draw_contours(binary, contours)),
+                    title=f"Contours in frame {frame.index}",
+                    position=Position(0, 0))
 
 
 def analyze_video(video: Video) -> None:
