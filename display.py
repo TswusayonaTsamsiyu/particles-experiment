@@ -1,11 +1,9 @@
 import cv2 as cv
+from typing import Callable
 from screeninfo import get_monitors
 from contextlib import contextmanager
 
 from utils import Image, Size, Position
-
-ESC = 27
-CLOSE_BTN = -1
 
 SCALE_FACTOR = 0.9
 
@@ -47,12 +45,12 @@ def show_window(image: Image,
 
 
 @contextmanager
-def window_control():
+def window_control(handle_key: Callable[[int], None] = None) -> None:
     yield
     key_code = cv.waitKey(0)
     cv.destroyAllWindows()
-    if key_code in [ESC, CLOSE_BTN]:
-        exit()
+    if handle_key:
+        handle_key(key_code)
 
 
 def show_single_window(image: Image,

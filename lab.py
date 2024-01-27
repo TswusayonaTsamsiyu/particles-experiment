@@ -6,7 +6,7 @@ from functools import reduce
 import image as img
 import display as disp
 from video import Video, Frame
-from utils import Image, Position
+from utils import Image, Position, exit_for
 from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
@@ -14,6 +14,10 @@ JUMP_FRAMES = 20
 
 BLUR_SIZE = 15
 KSIZE = (BLUR_SIZE, BLUR_SIZE)
+
+ESC = 27
+CLOSE_BTN = -1
+EXIT_CODES = {ESC, CLOSE_BTN}
 
 
 # TODO:
@@ -39,7 +43,7 @@ def has_tracks(frame: Image) -> bool:
 def analyze_frame(frame: Frame, bg: Image) -> None:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
-    with disp.window_control():
+    with disp.window_control(exit_for(EXIT_CODES)):
         disp.show_window(disp.fit_to_screen(prepared),
                          title=f"Prepared frame {frame.index}",
                          position=Position(0, 0))
