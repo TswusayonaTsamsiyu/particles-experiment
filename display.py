@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from utils import Image, Size, Position
 
 SCALE_FACTOR = 0.9
+WINDOW_SEP = 5
 
 
 @dataclass
@@ -43,6 +44,10 @@ def fit_to_screen(image: Image) -> Image:
         new_height = screen_size.height * SCALE_FACTOR
         new_width = image_size.width * new_height / image_size.height
     return cv.resize(image, (int(new_width), int(new_height)))
+
+
+def right_of(window: Window) -> Position:
+    return Position(window.position.x + window.size.width + WINDOW_SEP, window.position.y)
 
 
 def show_window(image: Image,
