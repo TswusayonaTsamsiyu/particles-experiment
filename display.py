@@ -17,9 +17,6 @@ class Window:
     size: Size
     position: Position
 
-    def destroy(self):
-        cv.destroyWindow(self.title)
-
 
 def get_screen_size():
     primary_monitor = next(filter(lambda m: m.is_primary, get_monitors()))
