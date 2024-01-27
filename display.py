@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from screeninfo import get_monitors
 from contextlib import contextmanager
 
+from image import scale
 from utils import Image, Size, Position
 
 SCALE_FACTOR = 0.9
@@ -35,15 +36,13 @@ def get_aspect_ratio(size: Size) -> float:
 
 
 def fit_to_screen(image: Image) -> Image:
-    image_size = get_image_size(image)
     screen_size = get_screen_size()
+    image_size = get_image_size(image)
     if get_aspect_ratio(image_size) > get_aspect_ratio(screen_size):
-        new_width = screen_size.width * SCALE_FACTOR
-        new_height = image_size.height * new_width / image_size.width
+        scaling = screen_size.width / image_size.width
     else:
-        new_height = screen_size.height * SCALE_FACTOR
-        new_width = image_size.width * new_height / image_size.height
-    return cv.resize(image, (int(new_width), int(new_height)))
+        scaling = screen_size.height / image_size.height
+    return scale(image, scaling * SCALE_FACTOR)
 
 
 def right_of(window: Window) -> Position:

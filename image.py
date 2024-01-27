@@ -52,3 +52,7 @@ def draw_contours(image: Image,
                   thickness: int = 2) -> Image:
     rgb_copy = cv.cvtColor(image.copy(), cv.COLOR_GRAY2BGR)
     return cv.drawContours(rgb_copy, contours, -1, color, thickness)
+
+
+def scale(image: Image, factor: float) -> Image:
+    return cv.resize(image, None, fx=factor, fy=factor)
