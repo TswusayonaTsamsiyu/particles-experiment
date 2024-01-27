@@ -9,9 +9,6 @@ CLOSE_BTN = -1
 
 SCALE_FACTOR = 0.9
 
-IMAGE = "image"
-SCREEN = "screen"
-
 
 def get_screen_size():
     primary_monitor = next(filter(lambda m: m.is_primary, get_monitors()))

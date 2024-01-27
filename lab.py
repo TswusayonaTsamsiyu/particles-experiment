@@ -27,7 +27,6 @@ def prepare(frame: Image) -> Image:
 
 def make_binary(frame: Image) -> Image:
     return img.threshold(frame, np.std(frame) * 5)
-    # return img.blur(img.threshold(img.adjust_brightness_contrast(frame)), KSIZE)
 
 
 def has_tracks(frame: Image) -> bool:
@@ -35,10 +34,6 @@ def has_tracks(frame: Image) -> bool:
     min_, max_ = cv.minMaxLoc(frame)[:2]
     print(f"Mean: {round(float(mean[0][0]), 3)}, STD: {round(float(std[0][0]), 3)}, Max: {max_}")
     return mean > 0.6 and std > 1 and max_ > 25
-
-
-def get_avg_bg(frames: Iterable[Image], window: int) -> Image:
-    return cv.divide(window, reduce(cv.add, map(prepare, frames)))
 
 
 def analyze_frame(frame: Frame, bg: Image) -> None:
