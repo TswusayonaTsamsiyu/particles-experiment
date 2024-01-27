@@ -1,13 +1,15 @@
 import cv2 as cv
 from pathlib import Path
-from numpy import ndarray
 from typing import Generator
+from dataclasses import dataclass
+
+from utils import Image
 
 
+@dataclass
 class Frame:
-    def __init__(self, pixels: ndarray, index: int):
-        self.pixels = pixels
-        self.index = index
+    pixels: Image
+    index: int
 
 
 class Video:
