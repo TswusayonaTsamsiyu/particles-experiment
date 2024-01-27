@@ -44,16 +44,17 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
     with disp.window_control(exit_for(EXIT_CODES)):
-        disp.show_window(disp.fit_to_screen(prepared),
-                         title=f"Prepared frame {frame.index}",
-                         position=Position(0, 0))
+        window = disp.show_window(disp.fit_to_screen(prepared),
+                                  title=f"Prepared frame {frame.index}",
+                                  position=Position(0, 0))
         subtracted = cv.subtract(prepared, bg)
         binary = make_binary(subtracted)
         print("Tracks detected" if has_tracks(subtracted) else "No tracks")
         contours = img.find_contours(binary)
+        position = Position(window.position.x + window.size.width + 5, 0)
         disp.show_window(disp.fit_to_screen(img.draw_contours(binary, contours)),
                          title=f"Binary frame {frame.index} with contours",
-                         position=Position(600, 0))
+                         position=position)
 
 
 def analyze_video(video: Video) -> None:

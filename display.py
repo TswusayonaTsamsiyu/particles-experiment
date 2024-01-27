@@ -1,11 +1,22 @@
 import cv2 as cv
 from typing import Callable
+from dataclasses import dataclass
 from screeninfo import get_monitors
 from contextlib import contextmanager
 
 from utils import Image, Size, Position
 
 SCALE_FACTOR = 0.9
+
+
+@dataclass
+class Window:
+    title: str
+    size: Size
+    position: Position
+
+    def destroy(self):
+        cv.destroyWindow(self.title)
 
 
 def get_screen_size():
@@ -36,12 +47,14 @@ def fit_to_screen(image: Image) -> Image:
 
 def show_window(image: Image,
                 title: str = "Image",
-                position: Position = None) -> None:
+                position: Position = None) -> Window:
     cv.namedWindow(title, cv.WINDOW_NORMAL)
     cv.imshow(title, image)
-    cv.resizeWindow(title, *get_image_size(image))
+    size = get_image_size(image)
+    cv.resizeWindow(title, *size)
     if position:
         cv.moveWindow(title, *position)
+    return Window(title, size, position)
 
 
 @contextmanager
