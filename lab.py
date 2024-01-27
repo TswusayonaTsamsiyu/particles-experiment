@@ -6,7 +6,7 @@ from functools import reduce
 import image as img
 from utils import Image
 from video import Video, Frame
-from viewing import window_control, show_window, Position, fit_to_screen
+from viewing import window_control, show_window, Position, fit_to_screen, show_single_window
 from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
@@ -55,8 +55,7 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
 def analyze_video(video: Video) -> None:
     frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
     bg = prepare(next(frames).pixels)
-    with window_control():
-        show_window(fit_to_screen(bg), f"Background frame {BG_FRAME}", position=Position(0, 0))
+    show_single_window(fit_to_screen(bg), f"Background frame {BG_FRAME}", position=Position(0, 0))
     for frame in frames:
         analyze_frame(frame, bg)
 

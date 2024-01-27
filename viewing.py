@@ -53,3 +53,10 @@ def window_control():
     cv.destroyAllWindows()
     if key_code in [ESC, CLOSE_BTN]:
         exit()
+
+
+def show_single_window(image: Image,
+                       title: str = "Image",
+                       position: Position = None) -> None:
+    with window_control():
+        show_window(image, title, position)
