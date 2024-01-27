@@ -1,9 +1,8 @@
 import cv2 as cv
 import numpy as np
-from numpy import ndarray
 from typing import Tuple, Sequence
 
-from utils import Color, Image
+from utils import Color, Image, Contour
 
 GREEN = Color(0, 255, 0)
 
@@ -43,12 +42,12 @@ def subtract_bg(image: Image, thresh: int) -> Image:
     return cv.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(image)
 
 
-def find_contours(image: Image) -> Sequence[ndarray]:
+def find_contours(image: Image) -> Sequence[Contour]:
     return cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]
 
 
 def draw_contours(image: Image,
-                  contours: Sequence[ndarray],
+                  contours: Sequence[Contour],
                   color: Color = GREEN,
                   thickness: int = 2) -> Image:
     rgb_copy = cv.cvtColor(image.copy(), cv.COLOR_GRAY2BGR)
