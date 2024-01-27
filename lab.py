@@ -1,7 +1,5 @@
 import cv2 as cv
 import numpy as np
-from typing import Iterable
-from functools import reduce
 
 import image as img
 import display as disp
