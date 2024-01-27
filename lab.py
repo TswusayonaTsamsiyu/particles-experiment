@@ -51,7 +51,7 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
         subtracted = cv.subtract(prepared, bg)
         binary = make_binary(subtracted)
         print("Tracks detected" if has_tracks(subtracted) else "No tracks")
-        contours = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]
+        contours = img.find_contours(binary)
         show_window(fit_to_screen(img.draw_contours(binary, contours)),
                     title=f"Binary frame {frame.index} with contours",
                     position=Position(600, 0))

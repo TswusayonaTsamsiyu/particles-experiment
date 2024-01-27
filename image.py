@@ -43,6 +43,10 @@ def subtract_bg(image: Image, thresh: int) -> Image:
     return cv.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(image)
 
 
+def find_contours(image: Image) -> Sequence[ndarray]:
+    return cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]
+
+
 def draw_contours(image: Image,
                   contours: Sequence[ndarray],
                   color: Color = GREEN,
