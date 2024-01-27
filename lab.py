@@ -4,9 +4,9 @@ from typing import Iterable
 from functools import reduce
 
 import image as img
-from utils import Image
+import display as disp
 from video import Video, Frame
-from viewing import window_control, show_window, Position, fit_to_screen, show_single_window
+from utils import Image, Position
 from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
@@ -39,23 +39,25 @@ def has_tracks(frame: Image) -> bool:
 def analyze_frame(frame: Frame, bg: Image) -> None:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
-    with window_control():
-        show_window(fit_to_screen(prepared),
-                    title=f"Prepared frame {frame.index}",
-                    position=Position(0, 0))
+    with disp.window_control():
+        disp.show_window(disp.fit_to_screen(prepared),
+                         title=f"Prepared frame {frame.index}",
+                         position=Position(0, 0))
         subtracted = cv.subtract(prepared, bg)
         binary = make_binary(subtracted)
         print("Tracks detected" if has_tracks(subtracted) else "No tracks")
         contours = img.find_contours(binary)
-        show_window(fit_to_screen(img.draw_contours(binary, contours)),
-                    title=f"Binary frame {frame.index} with contours",
-                    position=Position(600, 0))
+        disp.show_window(disp.fit_to_screen(img.draw_contours(binary, contours)),
+                         title=f"Binary frame {frame.index} with contours",
+                         position=Position(600, 0))
 
 
 def analyze_video(video: Video) -> None:
     frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
     bg = prepare(next(frames).pixels)
-    show_single_window(fit_to_screen(bg), f"Background frame {BG_FRAME}", position=Position(0, 0))
+    disp.show_single_window(disp.fit_to_screen(bg),
+                            title=f"Background frame {BG_FRAME}",
+                            position=Position(0, 0))
     for frame in frames:
         analyze_frame(frame, bg)
 
