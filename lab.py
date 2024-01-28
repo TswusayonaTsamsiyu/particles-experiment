@@ -46,9 +46,10 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
     print("Tracks detected" if has_tracks(subtracted) else "No tracks")
     contours = img.find_contours(binary)
     with disp.window_control(exit_for(EXIT_CODES)):
-        prepwin = disp.show_window(disp.fit_to_screen(prepared),
+        shown = disp.fit_to_screen(prepared)
+        prepwin = disp.show_window(shown,
                                    title=f"Prepared frame {frame.index}",
-                                   position=Position(0, 0))
+                                   position=Position(disp.screen_center().x - shown.shape[1], 0))
         disp.show_window(disp.fit_to_screen(img.draw_contours(binary, contours)),
                          title=f"Binary frame {frame.index} with contours",
                          position=disp.right_of(prepwin))

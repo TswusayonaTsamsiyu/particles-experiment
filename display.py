@@ -46,6 +46,10 @@ def right_of(window: Window) -> Position:
     return Position(window.position.x + window.size.width + WINDOW_SEP, window.position.y)
 
 
+def screen_center() -> Position:
+    return Position(*map(lambda x: x // 2, get_screen_size()))
+
+
 def show_window(image: Image,
                 title: str = "Image",
                 position: Position = None) -> Window:
