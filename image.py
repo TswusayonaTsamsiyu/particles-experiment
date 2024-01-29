@@ -2,7 +2,8 @@ import cv2 as cv
 import numpy as np
 from typing import Tuple, Sequence
 
-from utils import Color, Image, Contour
+from contours import Contour
+from utils import Color, Image
 
 GREEN = Color(0, 255, 0)
 
@@ -43,7 +44,7 @@ def subtract_bg(image: Image, thresh: int) -> Image:
 
 
 def find_contours(image: Image) -> Sequence[Contour]:
-    return cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]
+    return tuple(map(Contour, cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]))
 
 
 def draw_contours(image: Image,
@@ -51,7 +52,7 @@ def draw_contours(image: Image,
                   color: Color = GREEN,
                   thickness: int = 2) -> Image:
     rgb_copy = cv.cvtColor(image.copy(), cv.COLOR_GRAY2BGR)
-    return cv.drawContours(rgb_copy, contours, -1, color, thickness)
+    return cv.drawContours(rgb_copy, tuple(contour.points for contour in contours), -1, color, thickness)
 
 
 def scale(image: Image, factor: float) -> Image:
