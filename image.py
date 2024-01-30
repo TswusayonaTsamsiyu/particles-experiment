@@ -13,7 +13,7 @@ def threshold(image: Image, thresh: int = None) -> Image:
     return cv.threshold(image, thresh, 255, cv.THRESH_BINARY)[1]
 
 
-def otsu_threshold(image: Image) -> Image:
+def otsu_threshold(image: Image) -> Tuple[float, Image]:
     return cv.threshold(image, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
 
