@@ -38,7 +38,7 @@ def has_tracks(threshold: float) -> bool:
     return threshold >= 1
 
 
-def analyze_frame(frame: Frame, bg: Image) -> None:
+def analyze_frame(frame: Frame, bg: Image) -> bool:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
     subtracted = cv.subtract(prepared, bg)
@@ -51,21 +51,29 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
             shown = disp.fit_to_screen(prepared)
             prepwin = disp.show_window(shown,
                                        title=f"Prepared frame {frame.index}",
-                                       position=Position(disp.screen_center().x - shown.shape[1], 0))
                                        position=Position(disp.screen_center().x - shown.shape[1] - 200, 0))
             disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
                              title=f"Binary frame {frame.index} with contours",
                              position=disp.right_of(prepwin))
+        print("Tracks detected")
+        return True
+    print("No tracks detected")
+    return False
 
 
 def analyze_video(video: Video) -> None:
     frames = video.iter_frames(start=BG_FRAME)
     bg = prepare(next(frames).pixels)
-    disp.show_single_window(disp.fit_to_screen(bg),
-                            title=f"Background frame {BG_FRAME}",
-                            position=Position(0, 0))
+    had_tracks = False
     for frame in frames:
-        analyze_frame(frame, bg)
+        found = analyze_frame(frame, bg)
+        if found:
+            had_tracks = True
+        else:
+            if had_tracks:
+                print("Changing BG")
+                bg = prepare(frame.pixels)
+            had_tracks = False
 
 
 def main() -> None:
