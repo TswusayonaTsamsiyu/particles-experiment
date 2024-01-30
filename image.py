@@ -10,9 +10,16 @@ def monochrome(image: Image) -> Image:
 
 
 def threshold(image: Image, thresh: int = None) -> Image:
-    if thresh:
-        return cv.threshold(image, thresh, 255, cv.THRESH_BINARY)[1]
-    return cv.threshold(image, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)[1]
+    return cv.threshold(image, thresh, 255, cv.THRESH_BINARY)[1]
+
+
+def otsu_threshold(image: Image) -> Image:
+    return cv.threshold(image, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+
+def adaptive_threshold(image: Image, adaptive_method: int = cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+                       threshold_type: int = cv.THRESH_BINARY, block_size: int = 11, cut: int = 0) -> Image:
+    return cv.adaptiveThreshold(image, 255, adaptive_method, threshold_type, block_size, cut)
 
 
 def blur(image: Image, ksize: Tuple[int, int]) -> Image:
