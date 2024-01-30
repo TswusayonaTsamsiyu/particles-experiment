@@ -12,14 +12,14 @@ GREEN = Color(0, 255, 0)
 class Contour:
     points: ndarray
 
-    def axes(self):
-        pass
+    def axes(self) -> Sequence[float]:
+        return self.min_area_rect()[1]
 
     def breadth(self) -> float:
-        pass
+        return self.axes()[1] * 2
 
     def length(self) -> float:
-        pass
+        return self.axes()[0] * 2
 
     def area(self) -> float:
         return cv.contourArea(self.points)
@@ -28,7 +28,7 @@ class Contour:
         return cv.arcLength(self.points, True)
 
     def center(self) -> Position:
-        pass
+        return Position(*self.min_area_rect()[0])
 
     def centroid(self) -> Position:
         m = self.moments()
@@ -45,6 +45,12 @@ class Contour:
 
     def is_convex(self) -> bool:
         return cv.isContourConvex(self.points)
+
+    def min_area_rect(self) -> cv.typing.RotatedRect:
+        return cv.minAreaRect(self.points)
+
+    def fit_line(self, dist_type: int = cv.DIST_L2, reps: float = 0.01, aeps: float = 0.01):
+        return cv.fitLine(self.points, dist_type, 0, reps, aeps)
 
 
 def contour_distance(contour1: Contour, contour2: Contour) -> float:
