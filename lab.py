@@ -6,6 +6,7 @@ import display as disp
 from video import Video, Frame
 from utils import Image, Position, exit_for
 from fs import get_bg_videos, get_rod_videos
+from contours import find_contours, draw_contours
 
 BG_FRAME = 3600
 JUMP_FRAMES = 20
@@ -44,13 +45,13 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
     subtracted = cv.subtract(prepared, bg)
     binary = make_binary(subtracted)
     print("Tracks detected" if has_tracks(subtracted) else "No tracks")
-    contours = img.find_contours(binary)
+    contours = find_contours(binary)
     with disp.window_control(exit_for(EXIT_CODES)):
         shown = disp.fit_to_screen(prepared)
         prepwin = disp.show_window(shown,
                                    title=f"Prepared frame {frame.index}",
                                    position=Position(disp.screen_center().x - shown.shape[1], 0))
-        disp.show_window(disp.fit_to_screen(img.draw_contours(binary, contours)),
+        disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
                          title=f"Binary frame {frame.index} with contours",
                          position=disp.right_of(prepwin))
 
