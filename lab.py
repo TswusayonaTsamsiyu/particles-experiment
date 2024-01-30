@@ -43,18 +43,18 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
     prepared = prepare(frame.pixels)
     subtracted = cv.subtract(prepared, bg)
     thresh, binary = img.threshold_otsu(subtracted)
-    print("Tracks detected" if has_tracks(thresh) else "No tracks")
-    contours = tuple(contour.convex_hull()
-                     for contour in find_contours(binary)
-                     if contour.area() > 600)
-    with disp.window_control(exit_for(EXIT_CODES)):
-        shown = disp.fit_to_screen(prepared)
-        prepwin = disp.show_window(shown,
-                                   title=f"Prepared frame {frame.index}",
-                                   position=Position(disp.screen_center().x - shown.shape[1], 0))
-        disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
-                         title=f"Binary frame {frame.index} with contours",
-                         position=disp.right_of(prepwin))
+    if has_tracks(thresh):
+        contours = tuple(contour.convex_hull()
+                         for contour in find_contours(binary)
+                         if contour.area() > 600)
+        with disp.window_control(exit_for(EXIT_CODES)):
+            shown = disp.fit_to_screen(prepared)
+            prepwin = disp.show_window(shown,
+                                       title=f"Prepared frame {frame.index}",
+                                       position=Position(disp.screen_center().x - shown.shape[1], 0))
+            disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
+                             title=f"Binary frame {frame.index} with contours",
+                             position=disp.right_of(prepwin))
 
 
 def analyze_video(video: Video) -> None:
