@@ -52,7 +52,9 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
     subtracted = cv.subtract(prepared, bg)
     thresh, binary = img.otsu_threshold(subtracted)
     print("Tracks detected" if has_tracks(thresh) else "No tracks")
-    contours = find_contours(binary)
+    contours = tuple(contour.convex_hull()
+                     for contour in find_contours(binary)
+                     if contour.area() > 600)
     with disp.window_control(exit_for(EXIT_CODES)):
         shown = disp.fit_to_screen(prepared)
         prepwin = disp.show_window(shown,

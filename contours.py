@@ -22,10 +22,29 @@ class Contour:
         pass
 
     def area(self) -> float:
-        pass
+        return cv.contourArea(self.points)
+
+    def circumference(self) -> float:
+        return cv.arcLength(self.points, True)
 
     def center(self) -> Position:
         pass
+
+    def centroid(self) -> Position:
+        m = self.moments()
+        return Position(m["m10"] / m["00"], m["01"] / m["00"])
+
+    def moments(self) -> cv.typing.Moments:
+        return cv.moments(self.points)
+
+    def approximate_polygon(self, epsilon: float = None) -> "Contour":
+        return Contour(cv.approxPolyDP(self.points, epsilon, True))
+
+    def convex_hull(self) -> "Contour":
+        return Contour(cv.convexHull(self.points))
+
+    def is_convex(self) -> bool:
+        return cv.isContourConvex(self.points)
 
 
 def contour_distance(contour1: Contour, contour2: Contour) -> float:
