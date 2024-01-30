@@ -59,7 +59,7 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
 
 
 def analyze_video(video: Video) -> None:
-    frames = video.iter_frames(start=BG_FRAME, jump=JUMP_FRAMES)
+    frames = video.iter_frames(start=BG_FRAME)
     bg = prepare(next(frames).pixels)
     disp.show_single_window(disp.fit_to_screen(bg),
                             title=f"Background frame {BG_FRAME}",
