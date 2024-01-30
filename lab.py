@@ -60,10 +60,9 @@ def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> N
 
 
 def analyze_video(video: Video) -> None:
-    frames = video.iter_frames(start=BG_FRAME)
-    bg = prepare(next(frames).pixels)
     had_tracks = False
-    for frame in frames:
+    bg = prepare(video.read_frame_at(BG_FRAME).pixels)
+    for frame in video.iter_frames(start=BG_FRAME + 1):
         thresh, binary = process_frame(frame, bg)
         if has_tracks(thresh):
             had_tracks = True
