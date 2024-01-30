@@ -52,6 +52,7 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
             prepwin = disp.show_window(shown,
                                        title=f"Prepared frame {frame.index}",
                                        position=Position(disp.screen_center().x - shown.shape[1], 0))
+                                       position=Position(disp.screen_center().x - shown.shape[1] - 200, 0))
             disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
                              title=f"Binary frame {frame.index} with contours",
                              position=disp.right_of(prepwin))
