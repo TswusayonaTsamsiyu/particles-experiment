@@ -1,6 +1,4 @@
 import cv2 as cv
-import numpy as np
-from typing import Tuple
 
 import image as img
 import display as disp
@@ -20,19 +18,13 @@ CLOSE_BTN = -1
 EXIT_CODES = {ESC, CLOSE_BTN}
 
 
-# TODO:
-# 1. Find local BG
-# 2. Find auto threshold
-
-
 def prepare(frame: Image) -> Image:
     return img.blur(img.monochrome(frame), KSIZE)
 
 
-def make_binary(frame: Image) -> Image:
-    return img.otsu_threshold(frame)[1]
-    # return img.adaptive_threshold(frame, adaptive_method=cv.ADAPTIVE_THRESH_GAUSSIAN_C ,block_size=71 ,cut=1)
-    # return img.threshold(frame, np.std(frame) * 5)
+# def make_binary(frame: Image) -> Image:
+# return img.adaptive_threshold(frame, adaptive_method=cv.ADAPTIVE_THRESH_GAUSSIAN_C ,block_size=71 ,cut=1)
+# return img.threshold(frame, np.std(frame) * 5)
 
 
 # def has_tracks(frame: Image) -> bool:
@@ -50,7 +42,7 @@ def analyze_frame(frame: Frame, bg: Image) -> None:
     print(f"Processing frame {frame.index}")
     prepared = prepare(frame.pixels)
     subtracted = cv.subtract(prepared, bg)
-    thresh, binary = img.otsu_threshold(subtracted)
+    thresh, binary = img.threshold_otsu(subtracted)
     print("Tracks detected" if has_tracks(thresh) else "No tracks")
     contours = tuple(contour.convex_hull()
                      for contour in find_contours(binary)
