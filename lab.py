@@ -1,11 +1,12 @@
 import cv2 as cv
+from typing import Sequence, Tuple
 
 import image as img
 import display as disp
 from video import Video, Frame
 from utils import Image, Position, exit_for
 from fs import get_bg_videos, get_rod_videos
-from contours import find_contours, draw_contours
+from contours import find_contours, draw_contours, Contour
 
 BG_FRAME = 3600
 JUMP_FRAMES = 20
@@ -38,27 +39,24 @@ def has_tracks(threshold: float) -> bool:
     return threshold >= 1
 
 
-def analyze_frame(frame: Frame, bg: Image) -> bool:
+def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
     print(f"Processing frame {frame.index}")
-    prepared = prepare(frame.pixels)
-    subtracted = cv.subtract(prepared, bg)
-    thresh, binary = img.threshold_otsu(subtracted)
-    if has_tracks(thresh):
-        contours = tuple(contour.convex_hull()
-                         for contour in find_contours(binary)
-                         if contour.area() > 600)
-        with disp.window_control(exit_for(EXIT_CODES)):
-            shown = disp.fit_to_screen(prepared)
-            prepwin = disp.show_window(shown,
-                                       title=f"Prepared frame {frame.index}",
-                                       position=Position(disp.screen_center().x - shown.shape[1] - 200, 0))
-            disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
-                             title=f"Binary frame {frame.index} with contours",
-                             position=disp.right_of(prepwin))
-        print("Tracks detected")
-        return True
-    print("No tracks detected")
-    return False
+    return img.threshold_otsu(cv.subtract(prepare(frame.pixels), bg))
+
+
+def find_tracks(binary: Image) -> Sequence[Contour]:
+    return tuple(contour for contour in find_contours(binary) if contour.area() > 600)
+
+
+def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
+    with disp.window_control(exit_for(EXIT_CODES)):
+        shown = disp.fit_to_screen(frame.pixels)
+        prepwin = disp.show_window(shown,
+                                   title=f"Prepared frame {frame.index}",
+                                   position=Position(disp.screen_center().x - shown.shape[1] - 200, 0))
+        disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
+                         title=f"Binary frame {frame.index} with contours",
+                         position=disp.right_of(prepwin))
 
 
 def analyze_video(video: Video) -> None:
@@ -66,10 +64,14 @@ def analyze_video(video: Video) -> None:
     bg = prepare(next(frames).pixels)
     had_tracks = False
     for frame in frames:
-        found = analyze_frame(frame, bg)
-        if found:
+        thresh, binary = process_frame(frame, bg)
+        if has_tracks(thresh):
             had_tracks = True
+            print("Tracks detected")
+            contours = find_tracks(binary)
+            display_frame(frame, binary, contours)
         else:
+            print("No tracks detected")
             if had_tracks:
                 print("Changing BG")
                 bg = prepare(frame.pixels)
