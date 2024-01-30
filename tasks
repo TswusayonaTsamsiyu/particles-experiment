@@ -1,0 +1,16 @@
+1. Threshold:
+    1.1 Adaptive threshold
+    1.2 Mix mean, STD, max
+    1.3 Maybe combine 1.1 and 1.2
+    1.4 Constant threshold (for the whole video)
+2. Has tracks & find background:
+    2.1 Has contours of min size
+    2.2 Mix mean, STD, max
+    2.3 Maybe combine 2.1 and 2.2
+3. Contours:
+    3.1 Area
+    3.2 Length and width
+    3.3 Curl
+4. Track tracks (contours) through the video, and find the most relevant frame
+5. Distinguishes between different kinds of tracks
+    5.1 Read article about ML training model of tracks
