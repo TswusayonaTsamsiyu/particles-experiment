@@ -15,7 +15,7 @@ class Contour:
     def axes(self) -> Sequence[float]:
         return self.min_area_rect()[1]
 
-    def breadth(self) -> float:
+    def width(self) -> float:
         return self.axes()[1] * 2
 
     def length(self) -> float:
