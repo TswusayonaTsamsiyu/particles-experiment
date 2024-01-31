@@ -32,7 +32,7 @@ class Contour:
 
     def centroid(self) -> Position:
         m = self.moments()
-        return Position(m["m10"] / m["00"], m["01"] / m["00"])
+        return Position(m["m10"] / m["m00"], m["m01"] / m["m00"])
 
     def moments(self) -> cv.typing.Moments:
         return cv.moments(self.points)
