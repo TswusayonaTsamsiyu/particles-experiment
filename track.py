@@ -1,10 +1,11 @@
 from typing import MutableSequence
 
+from video import Frame
 from contours import Contour
 
 
 class Track:
-    def __init__(self, contours: MutableSequence[Contour], start: int):
+    def __init__(self, contours: MutableSequence[Contour], start: Frame):
         self.contours = contours
         self.start = start
         self.end = start

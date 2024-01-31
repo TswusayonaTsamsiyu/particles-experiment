@@ -84,7 +84,7 @@ def analyze_video(video: Video) -> List[Track]:
             for contour in contours:
                 close = list(track for track in tracks
                              if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
-                             and (frame.index - track.end == 1))
+                             and (frame.index - track.end.index == 1))
                 if len(close) > 1:
                     to_display = binary
                     for track in close:
@@ -93,9 +93,9 @@ def analyze_video(video: Video) -> List[Track]:
                     raise Exception("Multiple tracks detected for same contour!")
                 if len(close) == 1:
                     close[0].append(contour)
-                    close[0].end = frame.index
+                    close[0].end = frame
                 else:
-                    tracks.append(Track([contour], frame.index))
+                    tracks.append(Track([contour], frame))
                     # display_frame(frame, binary, contours)
         else:
             print("No tracks detected")
