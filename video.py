@@ -11,6 +11,7 @@ from utils import Image
 class Frame:
     pixels: Image
     index: int
+    timestamp: timedelta
 
 
 class Video:
@@ -57,7 +58,7 @@ class Video:
         success, frame = self._cap.read()
         if not success:
             raise IOError(f"Could not read frame at index {self._next_frame_index() - 1}")
-        return Frame(frame, self._next_frame_index() - 1)
+        return Frame(frame, self._next_frame_index() - 1, self._current_timestamp())
 
     @property
     def name(self) -> str:
