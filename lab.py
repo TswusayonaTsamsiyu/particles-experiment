@@ -1,8 +1,10 @@
 import cv2 as cv
-from typing import Sequence, Tuple
+from random import randint
+from typing import Sequence, Tuple, List
 
 import image as img
 import display as disp
+from track import Track
 from video import Video, Frame
 from utils import Image, Position, exit_for
 from fs import get_bg_videos, get_rod_videos
@@ -17,6 +19,12 @@ KSIZE = (BLUR_SIZE, BLUR_SIZE)
 ESC = 27
 CLOSE_BTN = -1
 EXIT_CODES = {ESC, CLOSE_BTN}
+
+DRIFT_DISTANCE = 5
+
+
+def random_color() -> Tuple[int, int, int]:
+    return randint(0, 255), randint(0, 255), randint(0, 255)
 
 
 def prepare(frame: Image) -> Image:
@@ -59,22 +67,43 @@ def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> N
                          position=disp.right_of(prepwin))
 
 
-def analyze_video(video: Video) -> None:
+def distance(point1: Position, point2: Position) -> float:
+    return ((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2) ** .5
+
+
+def analyze_video(video: Video) -> List[Track]:
+    tracks: List[Track] = []
     had_tracks = False
     bg = prepare(video.read_frame_at(BG_FRAME).pixels)
-    for frame in video.iter_frames(start=BG_FRAME + 1):
+    for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
         thresh, binary = process_frame(frame, bg)
         if has_tracks(thresh):
             had_tracks = True
             print("Tracks detected")
             contours = find_tracks(binary)
-            display_frame(frame, binary, contours)
+            for contour in contours:
+                close = list(track for track in tracks
+                             if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
+                             and (frame.index - track.end == 1))
+                if len(close) > 1:
+                    to_display = binary
+                    for track in close:
+                        to_display = draw_contours(to_display, [track.contours[-1]], random_color())
+                    display_frame(frame, to_display, contours)
+                    raise Exception("Multiple tracks detected for same contour!")
+                if len(close) == 1:
+                    close[0].append(contour)
+                    close[0].end = frame.index
+                else:
+                    tracks.append(Track([contour], frame.index))
+                    # display_frame(frame, binary, contours)
         else:
             print("No tracks detected")
             if had_tracks:
                 print("Changing BG")
                 bg = prepare(frame.pixels)
             had_tracks = False
+    return tracks
 
 
 def main() -> None:
@@ -82,7 +111,7 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        analyze_video(video)
+        tracks = analyze_video(video)
 
 
 if __name__ == '__main__':
