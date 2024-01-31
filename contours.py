@@ -61,9 +61,13 @@ def find_contours(image: Image) -> Sequence[Contour]:
     return tuple(map(Contour, cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]))
 
 
+def is_grayscale(image: Image) -> bool:
+    return len(image.shape) == 2
+
+
 def draw_contours(image: Image,
                   contours: Sequence[Contour],
                   color: Color = GREEN,
                   thickness: int = 2) -> Image:
-    rgb_copy = cv.cvtColor(image.copy(), cv.COLOR_GRAY2BGR)
+    rgb_copy = cv.cvtColor(image.copy(), cv.COLOR_GRAY2BGR) if is_grayscale(image) else image
     return cv.drawContours(rgb_copy, tuple(contour.points for contour in contours), -1, color, thickness)
