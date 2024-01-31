@@ -16,10 +16,10 @@ class Contour:
         return self.min_area_rect()[1]
 
     def width(self) -> float:
-        return self.axes()[1] * 2
+        return self.axes()[1]
 
     def length(self) -> float:
-        return self.axes()[0] * 2
+        return self.axes()[0]
 
     def area(self) -> float:
         return cv.contourArea(self.points)
