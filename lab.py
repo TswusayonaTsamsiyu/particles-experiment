@@ -11,6 +11,8 @@ from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
 JUMP_FRAMES = 20
+END_FRAME = BG_FRAME + 450
+NUM_SECONDS = 15
 
 BLUR_SIZE = 15
 KSIZE = (BLUR_SIZE, BLUR_SIZE)
@@ -83,22 +85,24 @@ def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], f
             tracks.append(Track([contour], frame))
             # display_frame(frame, binary, contours)
 
-def display_tracks(video: Video, tracks: MutableSequence[Track]) -> None:
-    bg = prepare(video.read_frame_at(BG_FRAME).pixels)
+def display_tracks(video: Video, tracks: MutableSequence[Track], start: int, stop: int = None) -> None:
+    bg = prepare(video.read_frame_at(start).pixels)
     frame_indexes = [track.relevant_frame_index() for track in tracks]
-    for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
+    for frame in video.iter_frames(start=start + 1, stop=stop):
         # print(f"Looking for tracks in frame {frame.index}")
         if frame.index in frame_indexes:
             for track in tracks:
                 if track.relevant_frame_index() == frame.index:
                     thresh, binary = process_frame(frame, bg)
+                    print(f"Frame timestamp: {frame.timestamp}")
                     display_frame(frame, binary, [track.relevant_contour()])
 
-def analyze_video(video: Video) -> List[Track]:
+def analyze_video(video: Video, start: int, stop: int = None) -> List[Track]:
     tracks: List[Track] = []
     had_tracks = False
-    bg = prepare(video.read_frame_at(BG_FRAME).pixels)
-    for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
+    bg = prepare(video.read_frame_at(start).pixels)
+    for frame in video.iter_frames(start=start + 1, stop=stop):
+        # print(f"Frame timestamp: {frame.timestamp}")
         thresh, binary = process_frame(frame, bg)
         # print(f"Threshold: {thresh}")
         if has_tracks(thresh):
@@ -120,13 +124,14 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        tracks = analyze_video(video)
+        tracks = analyze_video(video, BG_FRAME, NUM_SECONDS*video.fps)
         print(f"Num tracks: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.length() > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks: {len(relevant_tracks)}")
         relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
         print(f"Relevant_frame_indexes: {relevant_frame_indexes}")
-        display_tracks(video, relevant_tracks)
+        display_tracks(video, relevant_tracks, BG_FRAME, NUM_SECONDS*video.fps)
+        print(f"Finished")
 
 
 if __name__ == '__main__':
