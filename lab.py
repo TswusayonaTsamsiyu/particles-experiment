@@ -21,6 +21,7 @@ EXIT_CODES = {ESC, CLOSE_BTN}
 
 DRIFT_DISTANCE = 5
 
+MIN_TRACK_LENGTH = 3
 
 def prepare(frame: Image) -> Image:
     return img.blur(img.grayscale(frame), KSIZE)
@@ -43,12 +44,12 @@ def has_tracks(threshold: float) -> bool:
 
 
 def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
-    print(f"Processing frame {frame.index}")
+    # print(f"Processing frame {frame.index}")
     return img.threshold_otsu(img.subtract(prepare(frame.pixels), bg))
 
 
 def find_tracks(binary: Image) -> Sequence[Contour]:
-    return tuple(contour for contour in find_contours(binary, external_only=True) if contour.area() > 600)
+    return tuple(contour for contour in find_contours(binary) if contour.area() > 600)
 
 
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
@@ -82,6 +83,16 @@ def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], f
             tracks.append(Track([contour], frame))
             # display_frame(frame, binary, contours)
 
+def display_tracks(video: Video, tracks: MutableSequence[Track]) -> None:
+    bg = prepare(video.read_frame_at(BG_FRAME).pixels)
+    frame_indexes = [track.relevant_frame_index() for track in tracks]
+    for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
+        # print(f"Looking for tracks in frame {frame.index}")
+        if frame.index in frame_indexes:
+            for track in tracks:
+                if track.relevant_frame_index() == frame.index:
+                    thresh, binary = process_frame(frame, bg)
+                    display_frame(frame, binary, [track.relevant_contour()])
 
 def analyze_video(video: Video) -> List[Track]:
     tracks: List[Track] = []
@@ -89,14 +100,14 @@ def analyze_video(video: Video) -> List[Track]:
     bg = prepare(video.read_frame_at(BG_FRAME).pixels)
     for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
         thresh, binary = process_frame(frame, bg)
-        print(f"Threshold: {thresh}")
+        # print(f"threshold: {thresh}")
         if has_tracks(thresh):
             had_tracks = True
-            print("Tracks detected")
+            # print("Tracks detected")
             contours = find_tracks(binary)
             update_tracks(tracks, contours, frame, binary)
         else:
-            print("No tracks detected")
+            # print("No tracks detected")
             if had_tracks:
                 print("Changing BG")
                 bg = prepare(frame.pixels)
@@ -110,6 +121,12 @@ def main() -> None:
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
         tracks = analyze_video(video)
+        print(f"num tracks: {len(tracks)}")
+        relevant_tracks = [track for track in tracks if track.length() > MIN_TRACK_LENGTH]
+        print(f"num relevant tracks: {len(relevant_tracks)}")
+        relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
+        print(f"relevant_frame_indexes: {relevant_frame_indexes}")
+        display_tracks(video, relevant_tracks)
 
 
 if __name__ == '__main__':
