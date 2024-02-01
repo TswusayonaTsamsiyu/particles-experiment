@@ -3,7 +3,7 @@ from typing import Sequence, Tuple, List
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
-from bettercv.utils import Image, Position, exit_for, random_color
+from bettercv.utils import Image, Position, exit_for
 from bettercv.contours import find_contours, draw_contours, Contour
 
 from track import Track
@@ -81,10 +81,8 @@ def analyze_video(video: Video) -> List[Track]:
                              if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
                              and (frame.index - track.end.index == 1))
                 if len(close) > 1:
-                    to_display = binary
-                    for track in close:
-                        to_display = draw_contours(to_display, [track.contours[-1]], random_color())
-                    display_frame(frame, to_display, contours)
+                    binary_with_tracks = draw_contours(binary, [track.contours[-1] for track in close])
+                    display_frame(frame, binary_with_tracks, contours)
                     raise Exception("Multiple tracks detected for same contour!")
                 if len(close) == 1:
                     close[0].append(contour)

@@ -4,9 +4,7 @@ from typing import Sequence
 from dataclasses import dataclass
 
 from .image import bgr
-from .utils import Position, Image, Color
-
-GREEN = Color(0, 255, 0)
+from .utils import Position, Image, Color, random_color
 
 
 @dataclass
@@ -64,8 +62,9 @@ def find_contours(image: Image) -> Sequence[Contour]:
 
 def draw_contours(image: Image,
                   contours: Sequence[Contour],
-                  color: Color = GREEN,
+                  color: Color = None,
                   thickness: int = 2) -> Image:
-    return cv.drawContours(bgr(image.copy()),
-                           tuple(contour.points for contour in contours),
-                           -1, color, thickness)
+    canvas = bgr(image.copy())
+    for index, contour in enumerate(contours):
+        cv.drawContours(canvas, [contour.points], 0, color or random_color(), thickness)
+    return canvas
