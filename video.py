@@ -80,6 +80,10 @@ class Video:
     def fps(self):
         return self._get_prop(cv.CAP_PROP_FPS)
 
+    @property
+    def duration(self) -> timedelta:
+        return timedelta(seconds=self.frame_num / self.fps)
+
     def read_frame_at(self, index: int) -> Frame:
         original_index = self._next_frame_index()
         self._jump_to_frame(index)
