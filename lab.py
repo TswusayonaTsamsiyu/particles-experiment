@@ -23,7 +23,7 @@ DRIFT_DISTANCE = 5
 
 
 def prepare(frame: Image) -> Image:
-    return img.blur(img.monochrome(frame), KSIZE)
+    return img.blur(img.grayscale(frame), KSIZE)
 
 
 # def make_binary(frame: Image) -> Image:

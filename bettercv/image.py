@@ -21,7 +21,7 @@ def is_grayscale(image: Image) -> bool:
     return len(image.shape) == 2
 
 
-def monochrome(image: Image) -> Image:
+def grayscale(image: Image) -> Image:
     return cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
 
