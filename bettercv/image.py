@@ -2,9 +2,7 @@ import cv2 as cv
 import numpy as np
 from typing import Tuple
 
-from utils import Image
-
-MAX_PIXEL_VALUE = 255
+from .utils import Image, MAX_PIXEL_VALUE, MIN_PIXEL_VALUE
 
 
 def monochrome(image: Image) -> Image:
@@ -16,7 +14,7 @@ def threshold_binary(image: Image, thresh: int) -> Image:
 
 
 def threshold_otsu(image: Image) -> Tuple[float, Image]:
-    return cv.threshold(image, 0, MAX_PIXEL_VALUE, cv.THRESH_BINARY + cv.THRESH_OTSU)
+    return cv.threshold(image, MIN_PIXEL_VALUE, MAX_PIXEL_VALUE, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
 
 def threshold_adaptive(image: Image, method: int, block_size: int, cut: int) -> Image:
@@ -50,3 +48,11 @@ def subtract_bg(image: Image, thresh: int) -> Image:
 
 def scale(image: Image, factor: float) -> Image:
     return cv.resize(image, None, fx=factor, fy=factor)
+
+
+def subtract(image1: Image, image2: Image) -> Image:
+    return cv.subtract(image1, image2)
+
+
+def is_grayscale(image: Image) -> bool:
+    return len(image.shape) == 2

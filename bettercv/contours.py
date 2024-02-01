@@ -3,7 +3,8 @@ from numpy import ndarray
 from typing import Sequence
 from dataclasses import dataclass
 
-from utils import Position, Image, Color
+from .image import is_grayscale
+from .utils import Position, Image, Color
 
 GREEN = Color(0, 255, 0)
 
@@ -59,10 +60,6 @@ def contour_distance(contour1: Contour, contour2: Contour) -> float:
 
 def find_contours(image: Image) -> Sequence[Contour]:
     return tuple(map(Contour, cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]))
-
-
-def is_grayscale(image: Image) -> bool:
-    return len(image.shape) == 2
 
 
 def draw_contours(image: Image,

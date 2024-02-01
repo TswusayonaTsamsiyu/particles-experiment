@@ -1,7 +1,7 @@
 from typing import MutableSequence
 
-from video import Frame
-from contours import Contour
+from bettercv.video import Frame
+from bettercv.contours import Contour
 
 
 class Track:

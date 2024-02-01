@@ -1,14 +1,14 @@
-import cv2 as cv
 from random import randint
 from typing import Sequence, Tuple, List
 
-import image as img
-import display as disp
+from bettercv import image as img
+from bettercv import display as disp
+from bettercv.video import Video, Frame
+from bettercv.utils import Image, Position, exit_for, random_color
+from bettercv.contours import find_contours, draw_contours, Contour
+
 from track import Track
-from video import Video, Frame
-from utils import Image, Position, exit_for
 from fs import get_bg_videos, get_rod_videos
-from contours import find_contours, draw_contours, Contour
 
 BG_FRAME = 3600
 JUMP_FRAMES = 20
@@ -21,10 +21,6 @@ CLOSE_BTN = -1
 EXIT_CODES = {ESC, CLOSE_BTN}
 
 DRIFT_DISTANCE = 5
-
-
-def random_color() -> Tuple[int, int, int]:
-    return randint(0, 255), randint(0, 255), randint(0, 255)
 
 
 def prepare(frame: Image) -> Image:
@@ -49,7 +45,7 @@ def has_tracks(threshold: float) -> bool:
 
 def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
     print(f"Processing frame {frame.index}")
-    return img.threshold_otsu(cv.subtract(prepare(frame.pixels), bg))
+    return img.threshold_otsu(img.subtract(prepare(frame.pixels), bg))
 
 
 def find_tracks(binary: Image) -> Sequence[Contour]:

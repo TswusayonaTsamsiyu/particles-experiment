@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from screeninfo import get_monitors
 from contextlib import contextmanager
 
-from image import scale
-from utils import Image, Size, Position
+from .image import scale
+from .utils import Image, Size, Position
 
 SCALE_FACTOR = 0.9
 WINDOW_SEP = 5

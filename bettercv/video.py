@@ -4,7 +4,7 @@ from datetime import timedelta
 from dataclasses import dataclass
 from typing import Generator, Union
 
-from utils import Image
+from .utils import Image
 
 
 @dataclass
