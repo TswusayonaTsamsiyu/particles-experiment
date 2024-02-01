@@ -124,13 +124,13 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        tracks = analyze_video(video, BG_FRAME, NUM_SECONDS*video.fps)
+        tracks = analyze_video(video, BG_FRAME, BG_FRAME + NUM_SECONDS*video.fps)
         print(f"Num tracks: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.length() > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks: {len(relevant_tracks)}")
         relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
         print(f"Relevant_frame_indexes: {relevant_frame_indexes}")
-        display_tracks(video, relevant_tracks, BG_FRAME, NUM_SECONDS*video.fps)
+        display_tracks(video, relevant_tracks, BG_FRAME, BG_FRAME + NUM_SECONDS*video.fps)
         print(f"Finished")
 
 
