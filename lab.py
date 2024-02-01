@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple, List
+from typing import Sequence, Tuple, List, MutableSequence
 
 from bettercv import image as img
 from bettercv import display as disp
@@ -39,7 +39,7 @@ def prepare(frame: Image) -> Image:
 
 
 def has_tracks(threshold: float) -> bool:
-    return threshold >= 1
+    return threshold > 1
 
 
 def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
@@ -66,30 +66,35 @@ def distance(point1: Position, point2: Position) -> float:
     return ((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2) ** .5
 
 
+def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], frame: Frame, binary: Image) -> None:
+    for contour in contours:
+        close = list(track for track in tracks
+                     if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
+                     and (frame.index - track.end.index == 1))
+        if len(close) > 1:
+            binary_with_tracks = draw_contours(binary, [track.contours[-1] for track in close])
+            display_frame(frame, binary_with_tracks, contours)
+            raise Exception("Multiple tracks detected for same contour!")
+        if len(close) == 1:
+            close[0].append(contour)
+            close[0].end = frame
+        else:
+            tracks.append(Track([contour], frame))
+            # display_frame(frame, binary, contours)
+
+
 def analyze_video(video: Video) -> List[Track]:
     tracks: List[Track] = []
     had_tracks = False
     bg = prepare(video.read_frame_at(BG_FRAME).pixels)
     for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
         thresh, binary = process_frame(frame, bg)
+        print(f"threshold: {thresh}")
         if has_tracks(thresh):
             had_tracks = True
             print("Tracks detected")
             contours = find_tracks(binary)
-            for contour in contours:
-                close = list(track for track in tracks
-                             if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
-                             and (frame.index - track.end.index == 1))
-                if len(close) > 1:
-                    binary_with_tracks = draw_contours(binary, [track.contours[-1] for track in close])
-                    display_frame(frame, binary_with_tracks, contours)
-                    raise Exception("Multiple tracks detected for same contour!")
-                if len(close) == 1:
-                    close[0].append(contour)
-                    close[0].end = frame
-                else:
-                    tracks.append(Track([contour], frame))
-                    # display_frame(frame, binary, contours)
+            update_tracks(tracks, contours, frame, binary)
         else:
             print("No tracks detected")
             if had_tracks:
