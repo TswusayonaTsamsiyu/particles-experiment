@@ -121,11 +121,11 @@ def main() -> None:
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
         tracks = analyze_video(video)
-        print(f"num tracks: {len(tracks)}")
+        print(f"Num tracks: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.length() > MIN_TRACK_LENGTH]
-        print(f"num relevant tracks: {len(relevant_tracks)}")
+        print(f"Num relevant tracks: {len(relevant_tracks)}")
         relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
-        print(f"relevant_frame_indexes: {relevant_frame_indexes}")
+        print(f"Relevant_frame_indexes: {relevant_frame_indexes}")
         display_tracks(video, relevant_tracks)
 
 
