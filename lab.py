@@ -89,7 +89,7 @@ def analyze_video(video: Video) -> List[Track]:
     bg = prepare(video.read_frame_at(BG_FRAME).pixels)
     for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
         thresh, binary = process_frame(frame, bg)
-        print(f"threshold: {thresh}")
+        print(f"Threshold: {thresh}")
         if has_tracks(thresh):
             had_tracks = True
             print("Tracks detected")
