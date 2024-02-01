@@ -25,6 +25,10 @@ def grayscale(image: Image) -> Image:
     return cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
 
+def bgr(image: Image) -> Image:
+    return cv.cvtColor(image, cv.COLOR_GRAY2BGR)
+
+
 def blur(image: Image, ksize: Tuple[int, int]) -> Image:
     return cv.GaussianBlur(image, ksize, 0)
 
