@@ -3,7 +3,7 @@ from numpy import ndarray
 from typing import Sequence
 from dataclasses import dataclass
 
-from .image import bgr
+from .image import bgr, is_grayscale
 from .utils import Position, Image, Color, random_color
 
 
@@ -64,7 +64,7 @@ def draw_contours(image: Image,
                   contours: Sequence[Contour],
                   color: Color = None,
                   thickness: int = 2) -> Image:
-    canvas = bgr(image.copy())
+    canvas = bgr(image.copy()) if is_grayscale(image) else image.copy()
     for index, contour in enumerate(contours):
         cv.drawContours(canvas, [contour.points], 0, color or random_color(), thickness)
     return canvas
