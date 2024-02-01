@@ -56,8 +56,9 @@ def contour_distance(contour1: Contour, contour2: Contour) -> float:
     pass
 
 
-def find_contours(image: Image) -> Sequence[Contour]:
-    return tuple(map(Contour, cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)[0]))
+def find_contours(image: Image, external_only: bool = False) -> Sequence[Contour]:
+    mode = cv.RETR_EXTERNAL if external_only else cv.RETR_TREE
+    return tuple(map(Contour, cv.findContours(image, mode, cv.CHAIN_APPROX_SIMPLE)[0]))
 
 
 def draw_contours(image: Image,

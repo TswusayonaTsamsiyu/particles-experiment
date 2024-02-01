@@ -48,7 +48,7 @@ def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
 
 
 def find_tracks(binary: Image) -> Sequence[Contour]:
-    return tuple(contour for contour in find_contours(binary) if contour.area() > 600)
+    return tuple(contour for contour in find_contours(binary, external_only=True) if contour.area() > 600)
 
 
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
