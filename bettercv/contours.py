@@ -3,7 +3,7 @@ from numpy import ndarray
 from typing import Sequence
 from dataclasses import dataclass
 
-from .image import is_grayscale, bgr
+from .image import bgr
 from .utils import Position, Image, Color
 
 GREEN = Color(0, 255, 0)
@@ -66,5 +66,6 @@ def draw_contours(image: Image,
                   contours: Sequence[Contour],
                   color: Color = GREEN,
                   thickness: int = 2) -> Image:
-    rgb_copy = bgr(image.copy()) if is_grayscale(image) else image
-    return cv.drawContours(rgb_copy, tuple(contour.points for contour in contours), -1, color, thickness)
+    return cv.drawContours(bgr(image.copy()),
+                           tuple(contour.points for contour in contours),
+                           -1, color, thickness)
