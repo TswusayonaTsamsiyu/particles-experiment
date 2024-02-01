@@ -1,4 +1,3 @@
-from random import randint
 from typing import Sequence, Tuple, List
 
 from bettercv import image as img
