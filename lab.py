@@ -49,7 +49,7 @@ def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
 
 
 def find_tracks(binary: Image) -> Sequence[Contour]:
-    return tuple(contour for contour in find_contours(binary) if contour.area() > 600)
+    return tuple(contour for contour in find_contours(binary, external_only=True) if contour.area() > 600)
 
 
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
@@ -100,7 +100,7 @@ def analyze_video(video: Video) -> List[Track]:
     bg = prepare(video.read_frame_at(BG_FRAME).pixels)
     for frame in video.iter_frames(start=BG_FRAME + 1, stop=BG_FRAME + 500):
         thresh, binary = process_frame(frame, bg)
-        # print(f"threshold: {thresh}")
+        # print(f"Threshold: {thresh}")
         if has_tracks(thresh):
             had_tracks = True
             # print("Tracks detected")
