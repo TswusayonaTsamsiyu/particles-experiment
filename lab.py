@@ -3,7 +3,7 @@ from typing import Sequence, Tuple, List, MutableSequence
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
-from bettercv.utils import Image, Position, exit_for
+from bettercv.utils import Image, exit_for, distance
 from bettercv.contours import find_contours, draw_contours, Contour
 
 from track import Track
@@ -64,10 +64,6 @@ def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> N
                               title=f"Prepared frame {frame.index}",
                               position=disp.left_of(right_window))
     handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
-
-
-def distance(point1: Position, point2: Position) -> float:
-    return ((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2) ** .5
 
 
 def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], frame: Frame, binary: Image) -> None:
