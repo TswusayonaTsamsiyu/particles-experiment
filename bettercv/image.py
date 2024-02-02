@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from typing import Tuple
 
-from .utils import Image, MAX_PIXEL_VALUE, MIN_PIXEL_VALUE
+from .utils import Image, MAX_PIXEL_VALUE, MIN_PIXEL_VALUE, Size
 
 
 def threshold_binary(image: Image, thresh: int) -> Image:
@@ -60,3 +60,7 @@ def crop(image: Image, top: int, bottom: int) -> Image:
 
 def scale(image: Image, factor: float) -> Image:
     return cv.resize(image, None, fx=factor, fy=factor)
+
+
+def resize(image: Image, size: Size) -> Image:
+    return cv.resize(image, size)
