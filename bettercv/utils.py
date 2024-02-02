@@ -19,6 +19,10 @@ class Size(SizeBase):
     def __add__(self, other: "Size") -> "Size":
         return Size(self.width + other.width, self.height + other.height)
 
+    @property
+    def aspect_ratio(self):
+        return self.width / self.height
+
 
 def random_intensity() -> int:
     return randint(MIN_PIXEL_VALUE, MAX_PIXEL_VALUE)
