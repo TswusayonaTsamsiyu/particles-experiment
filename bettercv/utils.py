@@ -16,6 +16,12 @@ class Size(SizeBase):
     def __mul__(self, factor: float) -> "Size":
         return Size(self.width * factor, self.height * factor)
 
+    def __truediv__(self, factor: float) -> "Size":
+        return Size(self.width / factor, self.height / factor)
+
+    def __floordiv__(self, factor: float) -> "Size":
+        return Size(self.width // factor, self.height // factor)
+
     def __add__(self, other: "Size") -> "Size":
         return Size(self.width + other.width, self.height + other.height)
 
