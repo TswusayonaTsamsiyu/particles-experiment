@@ -5,11 +5,19 @@ from typing import Container, Callable
 
 Image = ndarray
 Position = namedtuple("Position", "x y")
-Size = namedtuple("Size", "width height")
+SizeBase = namedtuple("SizeBase", "width height")
 Color = namedtuple("Color", "red green blue")
 
 MAX_PIXEL_VALUE = 255
 MIN_PIXEL_VALUE = 0
+
+
+class Size(SizeBase):
+    def __mul__(self, factor: float) -> "Size":
+        return Size(self.width * factor, self.height * factor)
+
+    def __add__(self, other: "Size") -> "Size":
+        return Size(self.width + other.width, self.height + other.height)
 
 
 def random_intensity() -> int:
