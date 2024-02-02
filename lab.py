@@ -25,6 +25,8 @@ DRIFT_DISTANCE = 5
 
 MIN_TRACK_LENGTH = 3
 
+handle_key_code = exit_for(EXIT_CODES)
+
 
 def prepare(frame: Image) -> Image:
     return img.blur(img.grayscale(frame), KSIZE)
@@ -56,14 +58,12 @@ def find_tracks(binary: Image) -> Sequence[Contour]:
 
 
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
-    with disp.window_control(exit_for(EXIT_CODES)):
-        shown = disp.fit_to_screen(frame.pixels)
-        prepwin = disp.show_window(shown,
-                                   title=f"Prepared frame {frame.index}",
-                                   position=Position(disp.screen_center().x - shown.shape[1] - 200, 0))
-        disp.show_window(disp.fit_to_screen(draw_contours(binary, contours)),
-                         title=f"Binary frame {frame.index} with contours",
-                         position=disp.right_of(prepwin))
+    right_window = disp.Window(draw_contours(binary, contours),
+                               title=f"Binary frame {frame.index} with contours")
+    left_window = disp.Window(frame.pixels,
+                              title=f"Prepared frame {frame.index}",
+                              position=disp.left_of(right_window))
+    handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
 
 
 def distance(point1: Position, point2: Position) -> float:
@@ -128,7 +128,7 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        bg_frame = BG_FRAME # 20240109_122031.mp4, list(get_bg_videos())[1]
+        bg_frame = BG_FRAME  # 20240109_122031.mp4, list(get_bg_videos())[1]
         # bg_frame = (17 * 60 + 50) * video.fps # MAH00530.MP4, list(get_bg_videos())[3]
         stop = bg_frame + NUM_SECONDS * video.fps
         tracks = analyze_video(video, bg_frame, stop)
