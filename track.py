@@ -11,9 +11,6 @@ class Track:
         self.start = start
         self.end = start
 
-    def __len__(self):
-        return len(self.contours)
-
     @property
     def duration(self) -> Tuple[float, timedelta]:
         return (self.end.index - self.start.index,
@@ -33,4 +30,3 @@ class Track:
 
     def append(self, contour: Contour) -> None:
         self.contours.append(contour)
-
