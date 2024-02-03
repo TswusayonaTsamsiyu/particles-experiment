@@ -3,8 +3,9 @@ from numpy import ndarray
 from typing import Sequence
 from dataclasses import dataclass
 
+from .utils import Position, Image
 from .image import bgr, is_grayscale
-from .utils import Position, Image, Color, random_color
+from .colors import Color, random_color
 
 
 @dataclass
