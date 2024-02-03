@@ -16,14 +16,15 @@ class Track:
         return (self.end.index - self.start.index,
                 self.end.timestamp - self.start.timestamp)
 
+    @property
     def _relevant_contour_index(self) -> int:
         return min(len(self.contours) - 1, 4)
 
     def relevant_contour(self) -> Contour:
-        return self.contours[self._relevant_contour_index()]
+        return self.contours[self._relevant_contour_index]
 
     def relevant_frame_index(self) -> int:
-        return self.start.index + self._relevant_contour_index()
+        return self.start.index + self._relevant_contour_index
 
     def type(self) -> str:
         pass
