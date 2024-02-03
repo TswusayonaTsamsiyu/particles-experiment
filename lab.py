@@ -79,8 +79,7 @@ def update_tracks(tracks: MutableSequence[Track],
     for contour in contours:
         close = find_close_tracks(contour, frame, tracks)
         if len(close) > 1:
-            binary_with_tracks = draw_contours(binary, [track.end.contour for track in close])
-            display_frame(frame, binary_with_tracks, contours)
+            display_frame(frame, binary, [track.end.contour for track in close])
             raise Exception("Multiple tracks detected for same contour!")
         if len(close) == 1:
             close[0].record(contour, frame)
