@@ -18,6 +18,9 @@ class Color(ColorBase, Tuple):
     def __str__(self) -> str:
         return str(self.bgr)
 
+    def __len__(self) -> int:
+        return 3
+
     @property
     def bgr(self) -> ColorTuple:
         return _reversed_tuple(self.rgb)
