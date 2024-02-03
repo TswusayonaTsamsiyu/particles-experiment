@@ -1,3 +1,4 @@
+from time import time
 from typing import Sequence, Tuple, List, MutableSequence, Iterable
 
 from bettercv.track import Track
@@ -124,6 +125,7 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
 
 
 def main() -> None:
+    start = time()
     example_path = list(get_bg_videos())[1]
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
@@ -134,8 +136,8 @@ def main() -> None:
                            for track in tracks
                            if track.extent > MIN_TRACK_LENGTH]
         print(f"Num particle events found: {len(particle_events)}")
+        print(f"Finished in {time() - start} seconds.")
         display_particles(video, particle_events)
-        print(f"Finished")
 
 
 if __name__ == '__main__':
