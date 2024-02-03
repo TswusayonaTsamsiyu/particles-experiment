@@ -45,17 +45,5 @@ class Track:
     def duration(self) -> timedelta:
         return self.end.timestamp - self.start.timestamp
 
-    @property
-    def relevant_snapshot(self) -> Snapshot:
-        return self.snapshots[self._relevant_snapshot_index]
-
-    @property
-    def _relevant_snapshot_index(self) -> int:
-        return min(len(self.snapshots) - 1, 4)
-
-    @property
-    def type(self) -> str:
-        return "Don't know yet"
-
     def record(self, contour: Contour, frame: Frame) -> None:
         self.snapshots.append(Snapshot(frame.index, frame.timestamp, contour))

@@ -7,6 +7,7 @@ from bettercv.utils import Image, exit_for, distance
 from bettercv.contours import find_contours, draw_contours, Contour
 
 from track import Track
+from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
@@ -74,7 +75,7 @@ def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -
 
 def update_tracks(tracks: MutableSequence[Track],
                   contours: Sequence[Contour],
-                  frame: Frame, 
+                  frame: Frame,
                   binary: Image) -> None:
     for contour in contours:
         close = find_close_tracks(contour, frame, tracks)
@@ -90,12 +91,12 @@ def update_tracks(tracks: MutableSequence[Track],
             # display_frame(frame, binary, contours)
 
 
-def display_tracks(video: Video, tracks: Iterable[Track]) -> None:
-    for track in tracks:
-        relevant_frame = video.read_frame_at(track.relevant_snapshot.index)
+def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
+    for event in events:
+        relevant_frame = video.read_frame_at(event.best_snapshot.index)
         handle_key_code(disp.show([disp.fit_to_screen(disp.Window(
-            draw_contours(relevant_frame.pixels, [track.relevant_snapshot.contour]),
-            str(track.relevant_snapshot)
+            draw_contours(relevant_frame.pixels, [event.best_snapshot.contour]),
+            str(event.best_snapshot)
         ))]))
 
 
@@ -133,7 +134,7 @@ def main() -> None:
         print(f"Num tracks found: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.extent > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
-        display_tracks(video, relevant_tracks)
+        display_particles(video, map(ParticleEvent, relevant_tracks))
         print(f"Finished")
 
 
