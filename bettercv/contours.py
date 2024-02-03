@@ -3,7 +3,7 @@ from numpy import ndarray
 from typing import Sequence
 from dataclasses import dataclass
 
-from .utils import Position, Image
+from .types import Position, Image
 from .image import bgr, is_grayscale
 from .colors import Color, random_max_sv
 

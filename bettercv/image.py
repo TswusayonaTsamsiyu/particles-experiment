@@ -2,7 +2,8 @@ import cv2 as cv
 import numpy as np
 from typing import Tuple
 
-from .utils import Image, MAX_PIXEL_VALUE, MIN_PIXEL_VALUE, Size
+from .types import Image, Size
+from .utils import MAX_PIXEL_VALUE, MIN_PIXEL_VALUE
 
 
 def threshold_binary(image: Image, thresh: int) -> Image:

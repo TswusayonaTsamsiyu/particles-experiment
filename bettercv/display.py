@@ -3,7 +3,7 @@ from typing import Iterable
 from screeninfo import get_monitors
 
 from .image import resize
-from .utils import Image, Size, Position
+from .types import Image, Size, Position
 
 SCALE_FACTOR = 0.85
 WINDOW_SEP = 5
