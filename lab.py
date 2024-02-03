@@ -66,11 +66,18 @@ def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> N
     handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
 
 
-def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], frame: Frame, binary: Image) -> None:
+def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -> List[Track]:
+    return list(track for track in tracks
+                if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
+                and (frame.index - track.end.index == 1))
+
+
+def update_tracks(tracks: MutableSequence[Track],
+                  contours: Sequence[Contour],
+                  frame: Frame, 
+                  binary: Image) -> None:
     for contour in contours:
-        close = list(track for track in tracks
-                     if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
-                     and (frame.index - track.end.index == 1))
+        close = find_close_tracks(contour, frame, tracks)
         if len(close) > 1:
             binary_with_tracks = draw_contours(binary, [track.contours[-1] for track in close])
             display_frame(frame, binary_with_tracks, contours)
