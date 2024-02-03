@@ -83,18 +83,13 @@ def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], f
             # display_frame(frame, binary, contours)
 
 
-def display_tracks(video: Video, tracks: MutableSequence[Track], start: int, stop: int = None) -> None:
-    frame_indexes = [track.relevant_frame_index() for track in tracks]
-    # print(f"Relevant_frame_indexes: {frame_indexes}")
+def display_tracks(video: Video, tracks: MutableSequence[Track], start: int) -> None:
     bg = prepare(video.read_frame_at(start).pixels)
-    for frame in video.iter_frames(start=start + 1, stop=stop):
-        # print(f"Looking for tracks in frame {frame.index}")
-        if frame.index in frame_indexes:
-            for track in tracks:
-                if track.relevant_frame_index() == frame.index:
-                    thresh, binary = process_frame(frame, bg)
-                    print(f"Frame timestamp: {frame.timestamp}")
-                    display_frame(frame, binary, [track.relevant_contour()])
+    for track in tracks:
+        relevant_frame = video.read_frame_at(track.relevant_frame_index())
+        thresh, binary = process_frame(relevant_frame, bg)
+        print(f"Frame timestamp: {relevant_frame.timestamp}")
+        display_frame(relevant_frame, binary, [track.relevant_contour()])
 
 
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
@@ -133,7 +128,7 @@ def main() -> None:
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
         # relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
         # print(f"Relevant_frame_indexes: {relevant_frame_indexes}")
-        display_tracks(video, relevant_tracks, bg_frame, stop)
+        display_tracks(video, relevant_tracks, bg_frame)
         print(f"Finished")
 
 
