@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from .utils import Position, Image
 from .image import bgr, is_grayscale
-from .colors import Color, random_color
+from .colors import Color, random_max_sv
 
 
 @dataclass
@@ -65,8 +65,8 @@ def find_contours(image: Image, external_only: bool = False) -> Sequence[Contour
 def draw_contours(image: Image,
                   contours: Sequence[Contour],
                   color: Color = None,
-                  thickness: int = 2) -> Image:
+                  thickness: int = 3) -> Image:
     canvas = bgr(image.copy()) if is_grayscale(image) else image.copy()
     for index, contour in enumerate(contours):
-        cv.drawContours(canvas, [contour.points], 0, color or random_color(), thickness)
+        cv.drawContours(canvas, [contour.points], 0, color or random_max_sv(), thickness)
     return canvas
