@@ -1,9 +1,0 @@
-2. Join contours of broken tracks
-3. Contours:
-    3.1 Area
-    3.2 Length and width
-    3.3 Curvature
-    3.4 Make sure area, length, width actually compute what we want
-4. Track tracks (contours) through the video, and find the most relevant frame
-5. Distinguishes between different kinds of tracks
-    5.1 Read article about ML training model of tracks
