@@ -127,14 +127,13 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        bg_frame = BG_FRAME  # 20240109_122031.mp4, list(get_bg_videos())[1]
-        # bg_frame = (17 * 60 + 50) * video.fps # MAH00530.MP4, list(get_bg_videos())[3]
-        stop = bg_frame + NUM_SECONDS * video.fps
-        tracks = detect_tracks(video, bg_frame, stop)
+        tracks = detect_tracks(video, BG_FRAME, BG_FRAME + NUM_SECONDS * video.fps)
         print(f"Num tracks found: {len(tracks)}")
-        relevant_tracks = [track for track in tracks if track.extent > MIN_TRACK_LENGTH]
-        print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
-        display_particles(video, map(ParticleEvent, relevant_tracks))
+        particle_events = [ParticleEvent(track)
+                           for track in tracks
+                           if track.extent > MIN_TRACK_LENGTH]
+        print(f"Num particle events found: {len(particle_events)}")
+        display_particles(video, particle_events)
         print(f"Finished")
 
 
