@@ -97,11 +97,11 @@ def display_tracks(video: Video, tracks: MutableSequence[Track], start: int, sto
                     display_frame(frame, binary, [track.relevant_contour()])
 
 
-def analyze_video(video: Video, start: int, stop: int = None) -> List[Track]:
-    tracks: List[Track] = []
+def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
     had_tracks = False
-    bg = prepare(video.read_frame_at(start).pixels)
-    for frame in video.iter_frames(start=start + 1, stop=stop):
+    tracks: List[Track] = []
+    bg = prepare(video.read_frame_at(initial_bg).pixels)
+    for frame in video.iter_frames(start=initial_bg + 1, stop=stop):
         # print(f"Frame timestamp: {frame.timestamp}")
         thresh, binary = process_frame(frame, bg)
         # print(f"Threshold: {thresh}")
@@ -127,7 +127,7 @@ def main() -> None:
         bg_frame = BG_FRAME  # 20240109_122031.mp4, list(get_bg_videos())[1]
         # bg_frame = (17 * 60 + 50) * video.fps # MAH00530.MP4, list(get_bg_videos())[3]
         stop = bg_frame + NUM_SECONDS * video.fps
-        tracks = analyze_video(video, bg_frame, stop)
+        tracks = detect_tracks(video, bg_frame, stop)
         print(f"Num tracks found: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.duration[0] > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
