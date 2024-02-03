@@ -1,12 +1,12 @@
 from typing import Sequence, Tuple, List, MutableSequence, Iterable
 
+from bettercv.track import Track
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
 from bettercv.utils import Image, exit_for, distance
 from bettercv.contours import find_contours, draw_contours, Contour
 
-from track import Track
 from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
 

@@ -2,8 +2,8 @@ from datetime import timedelta
 from dataclasses import dataclass
 from typing import List, Iterator
 
-from bettercv.video import Frame
-from bettercv.contours import Contour
+from .video import Frame
+from .contours import Contour
 
 
 @dataclass

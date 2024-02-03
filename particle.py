@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from track import Track, Snapshot
+from bettercv.track import Track, Snapshot
 
 
 @dataclass
