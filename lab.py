@@ -129,7 +129,7 @@ def main() -> None:
         stop = bg_frame + NUM_SECONDS * video.fps
         tracks = analyze_video(video, bg_frame, stop)
         print(f"Num tracks found: {len(tracks)}")
-        relevant_tracks = [track for track in tracks if track.length() > MIN_TRACK_LENGTH]
+        relevant_tracks = [track for track in tracks if track.duration[0] > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
         # relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
         # print(f"Relevant_frame_indexes: {relevant_frame_indexes}")

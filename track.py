@@ -1,4 +1,5 @@
-from typing import MutableSequence
+from datetime import timedelta
+from typing import MutableSequence, Tuple
 
 from bettercv.video import Frame
 from bettercv.contours import Contour
@@ -13,8 +14,10 @@ class Track:
     def __len__(self):
         return len(self.contours)
 
-    def length(self) -> int:
-        return len(self.contours)
+    @property
+    def duration(self) -> Tuple[float, timedelta]:
+        return (self.end.index - self.start.index,
+                self.end.timestamp - self.start.timestamp)
 
     def _relevant_contour_index(self) -> int:
         return min(len(self.contours) - 1, 4)
