@@ -59,9 +59,9 @@ def find_tracks(binary: Image) -> Sequence[Contour]:
 
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
     right_window = disp.Window(draw_contours(binary, contours),
-                               title=f"Binary frame {frame.index} with contours")
+                               title=f"Binary {frame} with contours")
     left_window = disp.Window(frame.pixels,
-                              title=f"Prepared frame {frame.index}",
+                              title=f"Prepared {frame}",
                               position=disp.left_of(right_window))
     handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
 
@@ -88,7 +88,7 @@ def display_tracks(video: Video, tracks: MutableSequence[Track], start: int) -> 
     for track in tracks:
         relevant_frame = video.read_frame_at(track.relevant_frame_index())
         thresh, binary = process_frame(relevant_frame, bg)
-        print(f"Frame timestamp: {relevant_frame.timestamp}")
+        print(relevant_frame)
         display_frame(relevant_frame, binary, [track.relevant_contour()])
 
 
@@ -97,7 +97,7 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
     tracks: List[Track] = []
     bg = prepare(video.read_frame_at(initial_bg).pixels)
     for frame in video.iter_frames(start=initial_bg + 1, stop=stop):
-        # print(f"Frame timestamp: {frame.timestamp}")
+        # print(f"Processing {frame}")
         thresh, binary = process_frame(frame, bg)
         # print(f"Threshold: {thresh}")
         if has_tracks(thresh):

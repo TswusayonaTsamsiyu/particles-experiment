@@ -13,6 +13,12 @@ class Frame:
     index: int
     timestamp: timedelta
 
+    def __str__(self) -> str:
+        return repr(self).strip("<>")
+
+    def __repr__(self) -> str:
+        return f"<Frame {self.index} at {self.timestamp}>"
+
 
 class Video:
     def __init__(self, path: Union[Path, str]) -> None:
