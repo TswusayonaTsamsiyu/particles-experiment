@@ -20,14 +20,17 @@ class Track:
     def _relevant_contour_index(self) -> int:
         return min(len(self.contours) - 1, 4)
 
+    @property
     def relevant_contour(self) -> Contour:
         return self.contours[self._relevant_contour_index]
 
+    @property
     def relevant_frame_index(self) -> int:
         return self.start.index + self._relevant_contour_index
 
+    @property
     def type(self) -> str:
-        pass
+        return "Don't know yet"
 
     def append(self, contour: Contour) -> None:
         self.contours.append(contour)

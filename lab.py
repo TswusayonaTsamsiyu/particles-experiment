@@ -86,10 +86,10 @@ def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], f
 def display_tracks(video: Video, tracks: MutableSequence[Track], start: int) -> None:
     bg = prepare(video.read_frame_at(start).pixels)
     for track in tracks:
-        relevant_frame = video.read_frame_at(track.relevant_frame_index())
+        relevant_frame = video.read_frame_at(track.relevant_frame_index)
         thresh, binary = process_frame(relevant_frame, bg)
         print(relevant_frame)
-        display_frame(relevant_frame, binary, [track.relevant_contour()])
+        display_frame(relevant_frame, binary, [track.relevant_contour])
 
 
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
@@ -126,7 +126,7 @@ def main() -> None:
         print(f"Num tracks found: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.duration[0] > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
-        # relevant_frame_indexes = [track.relevant_frame_index() for track in relevant_tracks]
+        # relevant_frame_indexes = [track.relevant_frame_index) for track in relevant_tracks]
         # print(f"Relevant_frame_indexes: {relevant_frame_indexes}")
         display_tracks(video, relevant_tracks, bg_frame)
         print(f"Finished")
