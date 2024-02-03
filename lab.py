@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple, List, MutableSequence
+from typing import Sequence, Tuple, List, MutableSequence, Iterable
 
 from bettercv import image as img
 from bettercv import display as disp
@@ -83,13 +83,13 @@ def update_tracks(tracks: MutableSequence[Track], contours: Sequence[Contour], f
             # display_frame(frame, binary, contours)
 
 
-def display_tracks(video: Video, tracks: MutableSequence[Track], start: int) -> None:
-    bg = prepare(video.read_frame_at(start).pixels)
+def display_tracks(video: Video, tracks: Iterable[Track]) -> None:
     for track in tracks:
         relevant_frame = video.read_frame_at(track.relevant_frame_index)
-        thresh, binary = process_frame(relevant_frame, bg)
-        print(relevant_frame)
-        display_frame(relevant_frame, binary, [track.relevant_contour])
+        handle_key_code(disp.show([disp.fit_to_screen(disp.Window(
+            draw_contours(relevant_frame.pixels, [track.relevant_contour]),
+            str(relevant_frame)
+        ))]))
 
 
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
@@ -126,9 +126,7 @@ def main() -> None:
         print(f"Num tracks found: {len(tracks)}")
         relevant_tracks = [track for track in tracks if track.duration[0] > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
-        # relevant_frame_indexes = [track.relevant_frame_index) for track in relevant_tracks]
-        # print(f"Relevant_frame_indexes: {relevant_frame_indexes}")
-        display_tracks(video, relevant_tracks, bg_frame)
+        display_tracks(video, relevant_tracks)
         print(f"Finished")
 
 
