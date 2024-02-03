@@ -27,7 +27,10 @@ def show(windows: Iterable[Window]) -> int:
         show_window(window)
     key_code = wait_key()
     for window in windows:
-        destroy(window)
+        try:
+            destroy(window)
+        except cv.error:
+            pass
     return key_code
 
 
