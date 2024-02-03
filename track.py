@@ -1,36 +1,61 @@
 from datetime import timedelta
-from typing import MutableSequence, Tuple
+from dataclasses import dataclass
+from typing import List, Iterator
 
 from bettercv.video import Frame
 from bettercv.contours import Contour
 
 
+@dataclass
+class Snapshot:
+    index: int
+    timestamp: timedelta
+    contour: Contour
+
+    def __repr__(self) -> str:
+        return f"<Snapshot at {self.index}, {self.timestamp}>"
+
+    def __str__(self) -> str:
+        return repr(self).strip("<>")
+
+
 class Track:
-    def __init__(self, contours: MutableSequence[Contour], start: Frame):
-        self.contours = contours
-        self.start = start
-        self.end = start
+    def __init__(self):
+        self.snapshots: List[Snapshot] = []
+
+    def __iter__(self) -> Iterator[Snapshot]:
+        return iter(self.snapshots)
+
+    def __getitem__(self, index: int) -> Snapshot:
+        return self.snapshots[index]
 
     @property
-    def duration(self) -> Tuple[float, timedelta]:
-        return (self.end.index - self.start.index,
-                self.end.timestamp - self.start.timestamp)
+    def start(self) -> Snapshot:
+        return self.snapshots[0]
 
     @property
-    def _relevant_contour_index(self) -> int:
-        return min(len(self.contours) - 1, 4)
+    def end(self) -> Snapshot:
+        return self.snapshots[-1]
 
     @property
-    def relevant_contour(self) -> Contour:
-        return self.contours[self._relevant_contour_index]
+    def extent(self) -> int:
+        return self.end.index - self.start.index
 
     @property
-    def relevant_frame_index(self) -> int:
-        return self.start.index + self._relevant_contour_index
+    def duration(self) -> timedelta:
+        return self.end.timestamp - self.start.timestamp
+
+    @property
+    def relevant_snapshot(self) -> Snapshot:
+        return self.snapshots[self._relevant_snapshot_index]
+
+    @property
+    def _relevant_snapshot_index(self) -> int:
+        return min(len(self.snapshots) - 1, 4)
 
     @property
     def type(self) -> str:
         return "Don't know yet"
 
-    def append(self, contour: Contour) -> None:
-        self.contours.append(contour)
+    def record(self, contour: Contour, frame: Frame) -> None:
+        self.snapshots.append(Snapshot(frame.index, frame.timestamp, contour))

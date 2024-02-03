@@ -68,7 +68,7 @@ def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> N
 
 def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -> List[Track]:
     return list(track for track in tracks
-                if (distance(track.contours[-1].centroid(), contour.centroid()) < DRIFT_DISTANCE)
+                if (distance(track.end.contour.centroid(), contour.centroid()) < DRIFT_DISTANCE)
                 and (frame.index - track.end.index == 1))
 
 
@@ -79,23 +79,24 @@ def update_tracks(tracks: MutableSequence[Track],
     for contour in contours:
         close = find_close_tracks(contour, frame, tracks)
         if len(close) > 1:
-            binary_with_tracks = draw_contours(binary, [track.contours[-1] for track in close])
+            binary_with_tracks = draw_contours(binary, [track.end.contour for track in close])
             display_frame(frame, binary_with_tracks, contours)
             raise Exception("Multiple tracks detected for same contour!")
         if len(close) == 1:
-            close[0].append(contour)
-            close[0].end = frame
+            close[0].record(contour, frame)
         else:
-            tracks.append(Track([contour], frame))
+            new_track = Track()
+            new_track.record(contour, frame)
+            tracks.append(new_track)
             # display_frame(frame, binary, contours)
 
 
 def display_tracks(video: Video, tracks: Iterable[Track]) -> None:
     for track in tracks:
-        relevant_frame = video.read_frame_at(track.relevant_frame_index)
+        relevant_frame = video.read_frame_at(track.relevant_snapshot.index)
         handle_key_code(disp.show([disp.fit_to_screen(disp.Window(
-            draw_contours(relevant_frame.pixels, [track.relevant_contour]),
-            str(relevant_frame)
+            draw_contours(relevant_frame.pixels, [track.relevant_snapshot.contour]),
+            str(track.relevant_snapshot)
         ))]))
 
 
@@ -131,7 +132,7 @@ def main() -> None:
         stop = bg_frame + NUM_SECONDS * video.fps
         tracks = detect_tracks(video, bg_frame, stop)
         print(f"Num tracks found: {len(tracks)}")
-        relevant_tracks = [track for track in tracks if track.duration[0] > MIN_TRACK_LENGTH]
+        relevant_tracks = [track for track in tracks if track.extent > MIN_TRACK_LENGTH]
         print(f"Num relevant tracks found (len > {MIN_TRACK_LENGTH}): {len(relevant_tracks)}")
         display_tracks(video, relevant_tracks)
         print(f"Finished")
