@@ -4,13 +4,12 @@ from typing import Container, Callable
 
 Image = ndarray
 Position = namedtuple("Position", "x y")
-SizeBase = namedtuple("SizeBase", "width height")
 
 MAX_PIXEL_VALUE = 255
 MIN_PIXEL_VALUE = 0
 
 
-class Size(SizeBase):
+class Size(namedtuple("SizeBase", "width height")):
     def __mul__(self, factor: float) -> "Size":
         return Size(int(self.width * factor), int(self.height * factor))
 
