@@ -2,7 +2,11 @@ from numpy import ndarray
 from collections import namedtuple
 
 Image = ndarray
-Position = namedtuple("Position", "x y")
+
+
+class Position(namedtuple("PositionBase", "x y")):
+    def distance_to(self, other: "Position") -> float:
+        return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** .5
 
 
 class Size(namedtuple("SizeBase", "width height")):

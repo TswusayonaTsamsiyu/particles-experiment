@@ -3,7 +3,9 @@ import numpy as np
 from typing import Tuple
 
 from .types import Image, Size
-from .utils import MAX_PIXEL_VALUE, MIN_PIXEL_VALUE
+
+MAX_PIXEL_VALUE = 255
+MIN_PIXEL_VALUE = 0
 
 
 def threshold_binary(image: Image, thresh: int) -> Image:

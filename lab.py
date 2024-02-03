@@ -1,12 +1,11 @@
 from time import time
-from typing import Sequence, Tuple, List, MutableSequence, Iterable
+from typing import Sequence, Tuple, List, MutableSequence, Iterable, Container, Callable
 
 from bettercv.track import Track
-from bettercv.types import Image
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
-from bettercv.utils import exit_for, distance
+from bettercv.types import Image, Position
 from bettercv.contours import find_contours, draw_contours, Contour
 
 from particle import ParticleEvent
@@ -27,6 +26,11 @@ EXIT_CODES = {ESC, CLOSE_BTN}
 DRIFT_DISTANCE = 5
 
 MIN_TRACK_LENGTH = 3
+
+
+def exit_for(codes: Container[int]) -> Callable[[int], None]:
+    return lambda key_code: exit() if key_code in codes else None
+
 
 handle_key_code = exit_for(EXIT_CODES)
 
@@ -71,7 +75,7 @@ def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> N
 
 def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -> List[Track]:
     return list(track for track in tracks
-                if (distance(track.end.contour.centroid(), contour.centroid()) < DRIFT_DISTANCE)
+                if (track.end.contour.centroid().distance_to(contour.centroid()) < DRIFT_DISTANCE)
                 and (frame.index - track.end.index == 1))
 
 
