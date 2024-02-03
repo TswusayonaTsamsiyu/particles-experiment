@@ -1,19 +1,17 @@
 from time import time
 from typing import Sequence, Tuple, List, MutableSequence, Iterable, Container, Callable
 
+from bettercv.types import Image
 from bettercv.track import Track
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
-from bettercv.types import Image, Position
 from bettercv.contours import find_contours, draw_contours, Contour
 
 from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
 
 BG_FRAME = 3600
-JUMP_FRAMES = 20
-END_FRAME = BG_FRAME + 450
 NUM_SECONDS = 15
 
 BLUR_SIZE = 15
@@ -37,18 +35,6 @@ handle_key_code = exit_for(EXIT_CODES)
 
 def prepare(frame: Image) -> Image:
     return img.blur(img.grayscale(frame), KSIZE)
-
-
-# def make_binary(frame: Image) -> Image:
-# return img.adaptive_threshold(frame, adaptive_method=cv.ADAPTIVE_THRESH_GAUSSIAN_C ,block_size=71 ,cut=1)
-# return img.threshold(frame, np.std(frame) * 5)
-
-
-# def has_tracks(frame: Image) -> bool:
-#     mean, std = cv.meanStdDev(frame)
-#     min_, max_ = cv.minMaxLoc(frame)[:2]
-#     print(f"Mean: {round(float(mean[0][0]), 3)}, STD: {round(float(std[0][0]), 3)}, Max: {max_}")
-#     return mean > 0.6 and std > 1 and max_ > 25
 
 
 def has_tracks(threshold: float) -> bool:
