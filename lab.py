@@ -22,8 +22,9 @@ CLOSE_BTN = -1
 EXIT_CODES = {ESC, CLOSE_BTN}
 
 DRIFT_DISTANCE = 5
+DISC_CLOSE = 100
 
-MIN_TRACK_LENGTH = 3
+MIN_TRACK_LENGTH = 5
 
 
 def exit_for(codes: Container[int]) -> Callable[[int], None]:
@@ -81,17 +82,18 @@ def join_close_contours(contours: MutableSequence[Contour]) -> MutableSequence[C
     to_join = dict()
     for i, c1 in enumerate(contours):
         for j, c2 in list(enumerate(contours))[i + 1:]:
-            if j not in joined and c1.is_close_to(c2, 100):
+            if j not in joined and c1.is_close_to(c2, DISC_CLOSE):
+                return True
                 to_join.setdefault(i, []).append(j)
                 joined.add(j)
-    if to_join:
-        print(to_join)
-        print(flatten_tree(to_join))
-    final = []
-    for i, contour in enumerate(contours):
-        if not (i in to_join or i in joined):
-            final.append(contour)
-    return final
+    # if to_join:
+    #     print(to_join)
+    #     print(flatten_tree(to_join))
+    # final = []
+    # for i, contour in enumerate(contours):
+    #     if not (i in to_join or i in joined):
+    #         final.append(contour)
+    # return final
 
 
 def update_tracks(tracks: MutableSequence[Track],
@@ -134,7 +136,9 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
             # print("Tracks detected")
             contours = find_tracks(binary)
             if len(contours) > 1:
-                join_close_contours(contours)
+                if join_close_contours(contours):
+                    display_frame(frame, binary, contours)
+                # join_close_contours(contours)
             update_tracks(tracks, contours, frame, binary)
         else:
             # print("No tracks detected")
