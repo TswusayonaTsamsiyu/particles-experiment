@@ -1,7 +1,7 @@
 import cv2 as cv
-from numpy import ndarray
 from typing import Sequence
 from dataclasses import dataclass
+from numpy import ndarray, linalg, vstack
 
 from .types import Position, Image
 from .image import bgr, is_grayscale
@@ -52,9 +52,14 @@ class Contour:
     def fit_line(self, dist_type: int = cv.DIST_L2, reps: float = 0.01, aeps: float = 0.01):
         return cv.fitLine(self.points, dist_type, 0, reps, aeps)
 
+    def is_close_to(self, other: "Contour", distance: float) -> bool:
+        return any(linalg.norm(p1 - p2) < distance
+                   for p1 in self.points
+                   for p2 in other.points)
 
-def contour_distance(contour1: Contour, contour2: Contour) -> float:
-    pass
+
+def join_contours(contours: Sequence[Contour]) -> Contour:
+    return Contour(vstack([contour.points for contour in contours])).convex_hull()
 
 
 def find_contours(image: Image, external_only: bool = False) -> Sequence[Contour]:

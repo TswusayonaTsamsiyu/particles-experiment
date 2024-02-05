@@ -6,7 +6,7 @@ from bettercv.track import Track
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
-from bettercv.contours import find_contours, draw_contours, Contour
+from bettercv.contours import find_contours, draw_contours, join_contours, Contour
 
 from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
@@ -46,7 +46,7 @@ def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
     return img.threshold_otsu(img.subtract(prepare(frame.pixels), bg))
 
 
-def find_tracks(binary: Image) -> Sequence[Contour]:
+def find_tracks(binary: Image) -> Tuple[Contour]:
     return tuple(contour for contour in find_contours(binary, external_only=True) if contour.area() > 600)
 
 
@@ -63,6 +63,35 @@ def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -
     return list(track for track in tracks
                 if (track.end.contour.centroid().distance_to(contour.centroid()) < DRIFT_DISTANCE)
                 and (frame.index - track.end.index == 1))
+
+
+def flatten_tree(tree: dict) -> Sequence[Sequence]:
+    def flatten(tree: dict, key: int) -> List:
+        flat = [key]
+        if key in tree:
+            for value in tree[key]:
+                flat += flatten(tree, value)
+        return flat
+
+    return [flatten(tree, key) for key in tree]
+
+
+def join_close_contours(contours: MutableSequence[Contour]) -> MutableSequence[Contour]:
+    joined = set()
+    to_join = dict()
+    for i, c1 in enumerate(contours):
+        for j, c2 in list(enumerate(contours))[i + 1:]:
+            if j not in joined and c1.is_close_to(c2, 100):
+                to_join.setdefault(i, []).append(j)
+                joined.add(j)
+    if to_join:
+        print(to_join)
+        print(flatten_tree(to_join))
+    final = []
+    for i, contour in enumerate(contours):
+        if not (i in to_join or i in joined):
+            final.append(contour)
+    return final
 
 
 def update_tracks(tracks: MutableSequence[Track],
@@ -104,6 +133,8 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
             had_tracks = True
             # print("Tracks detected")
             contours = find_tracks(binary)
+            if len(contours) > 1:
+                join_close_contours(contours)
             update_tracks(tracks, contours, frame, binary)
         else:
             # print("No tracks detected")
