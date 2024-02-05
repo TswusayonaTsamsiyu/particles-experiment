@@ -80,7 +80,7 @@ def flatten_tree(tree: dict) -> Sequence[Sequence]:
 def join_close_contours(contours: Sequence[Contour]) -> MutableSequence[Contour]:
     groups = []
     for i, c1 in enumerate(contours):
-        close_indices = [j for j, c2 in enumerate(contours) if c2.is_close_to(c1, DISC_CLOSE)]
+        close_indices = [j for j, c2 in tuple(enumerate(contours))[i + 1:] if c2.is_close_to(c1, DISC_CLOSE)]
         new_group = set(close_indices + [i])
         disjoint_groups = []
         for group in groups:
