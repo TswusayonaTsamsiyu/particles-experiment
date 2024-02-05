@@ -77,23 +77,19 @@ def flatten_tree(tree: dict) -> Sequence[Sequence]:
     return [flatten(tree, key) for key in tree]
 
 
-def join_close_contours(contours: MutableSequence[Contour]) -> MutableSequence[Contour]:
-    joined = set()
-    to_join = dict()
+def join_close_contours(contours: Sequence[Contour]) -> MutableSequence[Contour]:
+    groups = []
     for i, c1 in enumerate(contours):
-        for j, c2 in list(enumerate(contours))[i + 1:]:
-            if j not in joined and c1.is_close_to(c2, DISC_CLOSE):
-                return True
-                to_join.setdefault(i, []).append(j)
-                joined.add(j)
-    # if to_join:
-    #     print(to_join)
-    #     print(flatten_tree(to_join))
-    # final = []
-    # for i, contour in enumerate(contours):
-    #     if not (i in to_join or i in joined):
-    #         final.append(contour)
-    # return final
+        close_indices = [j for j, c2 in enumerate(contours) if c2.is_close_to(c1, DISC_CLOSE)]
+        new_group = set(close_indices + [i])
+        disjoint_groups = []
+        for group in groups:
+            if new_group.intersection(group):
+                new_group = new_group.union(group)
+            else:
+                disjoint_groups.append(group)
+        groups = disjoint_groups + [new_group]
+    return [join_contours([contours[index] for index in group]) for group in groups]
 
 
 def update_tracks(tracks: MutableSequence[Track],
@@ -135,11 +131,13 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
             had_tracks = True
             # print("Tracks detected")
             contours = find_tracks(binary)
-            if len(contours) > 1:
-                if join_close_contours(contours):
-                    display_frame(frame, binary, contours)
-                # join_close_contours(contours)
-            update_tracks(tracks, contours, frame, binary)
+            # if len(contours) > 1:
+            #     joined = join_close_contours(contours)
+                # if len(joined) < len(contours):
+                    # display_frame(frame, draw_contours(frame.pixels, joined, (0, 0, 255)), contours)
+            update_tracks(tracks,
+                          join_close_contours(contours) if len(contours) > 1 else contours,
+                          frame, binary)
         else:
             # print("No tracks detected")
             if had_tracks:
