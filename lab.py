@@ -26,6 +26,7 @@ DIST_CLOSE = 100
 MIN_CONTOUR_SIZE = 500
 MIN_TRACK_LENGTH = 5
 MIN_THRESHOLD = 1
+BG_JUMP = 5
 
 
 def exit_for(codes: Container[int]) -> Callable[[int], None]:
@@ -149,7 +150,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
     tracks: List[Track] = []
     frames = list(video.iter_frames(start=initial_bg, stop=stop))
-    bg = prepare(img.avg([frame.pixels for frame in frames]))
+    bg = prepare(img.avg([frame.pixels for frame in frames[::BG_JUMP]]))
     # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
     for frame in frames:
         # print(f"Processing {frame}")
