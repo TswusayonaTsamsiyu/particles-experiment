@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
-from typing import Tuple
+from functools import reduce
+from typing import Tuple, Sequence
 
 from .types import Image, Size
 
@@ -49,6 +50,19 @@ def adjust_brightness_contrast(image: Image) -> Image:
 
 
 abc = adjust_brightness_contrast
+
+
+def avg(images: Sequence[Image]) -> Image:
+    avg_image = images[0]
+    for i, image in enumerate(images):
+        alpha = 1.0 / (i + 1)
+        beta = 1.0 - alpha
+        avg_image = cv.addWeighted(image, alpha, avg_image, beta, 0.0)
+    return avg_image
+
+
+def min(images: Sequence[Image]) -> Image:
+    return reduce(cv.min, images)
 
 
 def subtract(image1: Image, image2: Image) -> Image:
