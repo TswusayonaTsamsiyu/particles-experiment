@@ -120,7 +120,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
     for event in events:
         relevant_frame = video.read_frame_at(event.best_snapshot.index)
         handle_key_code(disp.show([disp.fit_to_screen(disp.Window(
-            draw_contours(relevant_frame.pixels, [event.best_snapshot.contour]),
+            draw_contours(img.abc(relevant_frame.pixels), [event.best_snapshot.contour]),
             str(event.best_snapshot)
         ))]))
 

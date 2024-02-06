@@ -48,6 +48,9 @@ def adjust_brightness_contrast(image: Image) -> Image:
     return cv.convertScaleAbs(image, alpha=stretch, beta=-stretch * p5)
 
 
+abc = adjust_brightness_contrast
+
+
 def subtract(image1: Image, image2: Image) -> Image:
     return cv.subtract(image1, image2)
 
