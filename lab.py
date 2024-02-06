@@ -22,7 +22,9 @@ CLOSE_BTN = -1
 EXIT_CODES = {ESC, CLOSE_BTN}
 
 DRIFT_DISTANCE = 5
-DISC_CLOSE = 100
+DIST_CLOSE = 100
+
+MIN_CONTOUR_SIZE = 500
 
 MIN_TRACK_LENGTH = 5
 
@@ -48,7 +50,8 @@ def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
 
 
 def find_tracks(binary: Image) -> Tuple[Contour]:
-    return tuple(contour for contour in find_contours(binary, external_only=True) if contour.area() > 600)
+    return tuple(contour for contour in find_contours(binary, external_only=True)
+                 if contour.area() > MIN_CONTOUR_SIZE)
 
 
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
@@ -81,7 +84,7 @@ def join_close_contours(contours: Sequence[Contour]) -> MutableSequence[Contour]
     groups = []
     for i, c1 in enumerate(contours):
         close_indices = [j for j, c2 in tuple(enumerate(contours))[i + 1:]
-                         if c2.is_close_to(c1, DISC_CLOSE)]
+                         if c2.is_close_to(c1, DIST_CLOSE)]
         new_group = set(close_indices + [i])
         disjoint_groups = []
         for group in groups:
