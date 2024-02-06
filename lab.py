@@ -1,5 +1,6 @@
 from time import time
-from typing import Sequence, Tuple, List, MutableSequence, Iterable, Container, Callable
+from more_itertools import chunked
+from typing import Sequence, Tuple, List, MutableSequence, Iterable, Container, Callable, Generator
 
 from bettercv.types import Image
 from bettercv.track import Track
@@ -27,6 +28,7 @@ MIN_CONTOUR_SIZE = 500
 MIN_TRACK_LENGTH = 5
 MIN_THRESHOLD = 1
 BG_JUMP = 5
+BG_BATCH_SIZE = 200
 
 
 def exit_for(codes: Container[int]) -> Callable[[int], None]:
@@ -136,12 +138,18 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 #     return tracks
 
 
+def iter_batches(frames: Iterable[Frame]) -> Generator[Tuple[Frame, Image], None, None]:
+    for batch in chunked(frames, BG_BATCH_SIZE):
+        print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
+        bg = prepare(img.avg([frame.pixels for frame in batch[::BG_JUMP]]))
+        # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
+        for frame in batch:
+            yield frame, bg
+
+
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
     tracks: List[Track] = []
-    frames = list(video.iter_frames(start=initial_bg, stop=stop))
-    bg = prepare(img.avg([frame.pixels for frame in frames[::BG_JUMP]]))
-    # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
-    for frame in frames:
+    for frame, bg in iter_batches(video.iter_frames(start=initial_bg, stop=stop)):
         # print(f"Processing {frame}")
         thresh, binary = process_frame(frame, bg)
         # print(f"Threshold: {thresh}")
