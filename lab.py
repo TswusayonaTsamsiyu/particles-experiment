@@ -1,5 +1,5 @@
 from time import time
-from more_itertools import chunked
+from more_itertools import chunked_even
 from typing import Sequence, Tuple, List, MutableSequence, Iterable, Container, Callable, Generator
 
 from bettercv.types import Image
@@ -139,7 +139,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 
 
 def iter_batches(frames: Iterable[Frame]) -> Generator[Tuple[Frame, Image], None, None]:
-    for batch in chunked(frames, BG_BATCH_SIZE):
+    for batch in chunked_even(frames, BG_BATCH_SIZE):
         print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
         bg = prepare(img.avg([frame.pixels for frame in batch[::BG_JUMP]]))
         # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
