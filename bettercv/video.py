@@ -106,4 +106,5 @@ class Video:
         while self._next_frame_index() < stop:
             frame = self._read_next()
             yield frame
-            self._jump_to_frame(frame.index + jump)
+            if jump > 1:
+                self._jump_to_frame(frame.index + jump)
