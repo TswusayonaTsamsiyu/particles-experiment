@@ -53,7 +53,7 @@ class Contour:
     def fit_line(self, dist_type: int = cv.DIST_L2, reps: float = 0.01, aeps: float = 0.01):
         return cv.fitLine(self.points, dist_type, 0, reps, aeps)
 
-    def is_close_to(self, other: "Contour", distance: float, jump: int = 5) -> bool:
+    def is_close_to(self, other: "Contour", distance: float, jump: int = 10) -> bool:
         return any(linalg.norm(p1 - p2) < distance
                    for p1 in self.points[::jump]
                    for p2 in other.points[::jump])
