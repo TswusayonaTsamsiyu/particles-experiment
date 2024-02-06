@@ -137,10 +137,6 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
             had_tracks = True
             # print("Tracks detected")
             contours = find_tracks(binary)
-            # if len(contours) > 1:
-            #     joined = join_close_contours(contours)
-                # if len(joined) < len(contours):
-                    # display_frame(frame, draw_contours(frame.pixels, joined, (0, 0, 255)), contours)
             update_tracks(tracks,
                           join_close_contours(contours) if len(contours) > 1 else contours,
                           frame, binary)
