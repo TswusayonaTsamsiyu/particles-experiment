@@ -11,7 +11,7 @@ from bettercv.contours import find_contours, draw_contours, join_contours, Conto
 from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
 
-BG_FRAME = 3600
+START_TIME = 120
 NUM_SECONDS = 15
 
 BLUR_SIZE = 15
@@ -171,7 +171,7 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        tracks = detect_tracks(video, BG_FRAME, BG_FRAME + NUM_SECONDS * video.fps)
+        tracks = detect_tracks(video, START_TIME * video.fps, (START_TIME + NUM_SECONDS) * video.fps)
         print(f"Num tracks found: {len(tracks)}")
         particle_events = [ParticleEvent(track)
                            for track in tracks
