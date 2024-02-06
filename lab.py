@@ -69,17 +69,6 @@ def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -
                 and (frame.index - track.end.index == 1))
 
 
-def flatten_tree(tree: dict) -> Sequence[Sequence]:
-    def flatten(tree: dict, key: int) -> List:
-        flat = [key]
-        if key in tree:
-            for value in tree[key]:
-                flat += flatten(tree, value)
-        return flat
-
-    return [flatten(tree, key) for key in tree]
-
-
 def join_close_contours(contours: Sequence[Contour]) -> MutableSequence[Contour]:
     groups = []
     for i, c1 in enumerate(contours):
