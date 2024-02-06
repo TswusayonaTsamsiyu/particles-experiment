@@ -1,11 +1,14 @@
 from random import randint
-from typing import Tuple, Iterator
+from typing import Tuple, Iterator, Sequence
 from colorutils import random_rgb, Color as ColorBase
 
 ColorTuple = Tuple[int, int, int]
 
+NUM_HUES = 360
+HUE_RANGE = (0, NUM_HUES - 1)
 
-class Color(ColorBase, Tuple):
+
+class Color(ColorBase, ColorTuple):
     def __getitem__(self, index: int) -> float:
         return self.bgr[index]
 
@@ -39,12 +42,14 @@ def random_color() -> Color:
 
 
 def random_hue() -> int:
-    return randint(0, 359)
+    return randint(*HUE_RANGE)
 
 
 def max_sv(hue: int) -> Color:
     return Color(hsv=(hue, 1, 1))
 
 
-def random_max_sv() -> Color:
-    return max_sv(random_hue())
+def max_spaced_hues(n: int, first: int = None) -> Sequence[int]:
+    spacing = NUM_HUES // n
+    first = first or random_hue()
+    return [(first + spacing * i) % NUM_HUES for i in range(n)]

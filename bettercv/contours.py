@@ -1,11 +1,12 @@
 import cv2 as cv
+from random import shuffle
 from typing import Sequence
 from dataclasses import dataclass
 from numpy import ndarray, linalg, vstack
 
 from .types import Position, Image
 from .image import bgr, is_grayscale
-from .colors import Color, random_max_sv
+from .colors import Color, max_sv, max_spaced_hues
 
 
 @dataclass
@@ -72,6 +73,11 @@ def draw_contours(image: Image,
                   color: Color = None,
                   thickness: int = 3) -> Image:
     canvas = bgr(image.copy()) if is_grayscale(image) else image.copy()
+    if color:
+        colors = [color] * len(contours)
+    else:
+        colors = list(map(max_sv, max_spaced_hues(len(contours))))
+        shuffle(colors)
     for index, contour in enumerate(contours):
-        cv.drawContours(canvas, [contour.points], 0, color or random_max_sv(), thickness)
+        cv.drawContours(canvas, [contour.points], 0, colors[index], thickness)
     return canvas
