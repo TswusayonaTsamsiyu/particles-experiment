@@ -28,6 +28,8 @@ MIN_CONTOUR_SIZE = 500
 
 MIN_TRACK_LENGTH = 5
 
+MIN_THRESHOLD = 1
+
 
 def exit_for(codes: Container[int]) -> Callable[[int], None]:
     return lambda key_code: exit() if key_code in codes else None
@@ -41,7 +43,7 @@ def prepare(frame: Image) -> Image:
 
 
 def has_tracks(threshold: float) -> bool:
-    return threshold > 1
+    return threshold > MIN_THRESHOLD
 
 
 def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
