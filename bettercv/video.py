@@ -2,7 +2,7 @@ import cv2 as cv
 from pathlib import Path
 from datetime import timedelta
 from dataclasses import dataclass
-from typing import Generator, Union
+from typing import Generator, Union, List
 
 from .types import Image
 
@@ -45,7 +45,11 @@ class Video:
     def __iter__(self) -> Generator[Frame, None, None]:
         return self.iter_frames()
 
-    def __getitem__(self, index: int) -> Frame:
+    def __getitem__(self, index: Union[int, slice]) -> Union[Frame, List[Frame]]:
+        if isinstance(index, slice):
+            return list(self.iter_frames(start=index.start or 0,
+                                         stop=index.stop,
+                                         jump=index.step or 1))
         return self.read_frame_at(index)
 
     def __repr__(self) -> str:
