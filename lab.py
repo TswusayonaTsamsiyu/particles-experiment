@@ -60,13 +60,13 @@ def has_tracks(threshold: float) -> bool:
 def find_prominent_contours(binary: Frame) -> Sequence[Contour]:
     return tuple(contour
                  for contour in find_contours(binary.image, external_only=True)
-                 if contour.area() > MIN_CONTOUR_SIZE)
+                 if contour.area > MIN_CONTOUR_SIZE)
 
 
 def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
     return (contour for contour in contours
-            if (contour.length() / contour.width() > 3)
-            and (contour.width() < 100))
+            if (contour.length / contour.width > 3)
+            and (contour.width < 100))
 
 
 # def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
@@ -80,7 +80,7 @@ def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
 
 def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track]) -> List[Track]:
     return list(track for track in tracks
-                if (track.end.contour.centroid().distance_to(contour.centroid()) < DRIFT_DISTANCE)
+                if (track.end.contour.centroid.distance_to(contour.centroid) < DRIFT_DISTANCE)
                 and (index - track.end.index == 1))
 
 

@@ -2,6 +2,7 @@ import cv2 as cv
 from random import shuffle
 from typing import Sequence
 from dataclasses import dataclass
+from functools import cached_property
 from numpy import ndarray, linalg, vstack
 
 from .types import Position, Image
@@ -13,28 +14,36 @@ from .colors import Color, max_sv, max_spaced_hues
 class Contour:
     points: ndarray
 
+    @property
     def axes(self) -> Sequence[float]:
-        return sorted(self.min_area_rect()[1])
+        return sorted(self.min_area_rect[1])
 
+    @property
     def width(self) -> float:
-        return self.axes()[0]
+        return self.axes[0]
 
+    @property
     def length(self) -> float:
-        return self.axes()[1]
+        return self.axes[1]
 
+    @cached_property
     def area(self) -> float:
         return cv.contourArea(self.points)
 
+    @cached_property
     def circumference(self) -> float:
         return cv.arcLength(self.points, True)
 
+    @property
     def center(self) -> Position:
-        return Position(*self.min_area_rect()[0])
+        return Position(*self.min_area_rect[0])
 
+    @property
     def centroid(self) -> Position:
-        m = self.moments()
-        return Position(m["m10"] / m["m00"], m["m01"] / m["m00"])
+        return Position(self.moments["m10"] / self.moments["m00"],
+                        self.moments["m01"] / self.moments["m00"])
 
+    @cached_property
     def moments(self) -> cv.typing.Moments:
         return cv.moments(self.points)
 
@@ -44,9 +53,11 @@ class Contour:
     def convex_hull(self) -> "Contour":
         return Contour(cv.convexHull(self.points))
 
+    @cached_property
     def is_convex(self) -> bool:
         return cv.isContourConvex(self.points)
 
+    @cached_property
     def min_area_rect(self) -> cv.typing.RotatedRect:
         return cv.minAreaRect(self.points)
 
