@@ -1,3 +1,4 @@
+from sys import argv
 from time import time
 from pathlib import Path
 from more_itertools import chunked_even
@@ -168,4 +169,5 @@ def analyze_video(path: Path) -> None:
 
 
 if __name__ == '__main__':
-    analyze_video(list(get_bg_videos())[1])
+    path = argv[1] if len(argv) > 1 else get_bg_videos()[1]
+    analyze_video(path)
