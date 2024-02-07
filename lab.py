@@ -46,10 +46,6 @@ def has_tracks(threshold: float) -> bool:
     return threshold > MIN_THRESHOLD
 
 
-def process_frame(image: Image) -> Tuple[float, Image]:
-    return img.threshold_otsu(image)
-
-
 def find_tracks(binary: Image) -> Tuple[Contour]:
     return tuple(contour for contour in find_contours(binary, external_only=True)
                  if contour.area() > MIN_CONTOUR_SIZE)
@@ -151,7 +147,7 @@ def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track
     tracks: List[Track] = []
     for frame in subtract_bg(video.iter_frames(start=initial_bg, stop=stop)):
         # print(f"Processing {frame}")
-        thresh, binary = process_frame(frame.image)
+        thresh, binary = img.threshold_otsu(frame.image)
         # print(f"Threshold: {thresh}")
         if has_tracks(thresh):
             # print("Tracks detected")
