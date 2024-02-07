@@ -1,4 +1,5 @@
 from time import time
+from pathlib import Path
 from more_itertools import chunked_even
 from typing import Sequence, List, MutableSequence, Iterable, Container, Callable, Generator
 
@@ -148,11 +149,10 @@ def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
     return tracks
 
 
-def main() -> None:
+def analyze_video(path: Path) -> None:
     start = time()
-    example_path = list(get_bg_videos())[1]
-    print(f"Parsing {example_path.name}...")
-    with Video(example_path) as video:
+    with Video(path) as video:
+        print(f"Parsing {video.name}...")
         print(f"Video has {video.frame_num} frames.")
         tracks = detect_tracks(video.iter_frames(
             start=START_TIME * video.fps,
@@ -168,4 +168,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    analyze_video(list(get_bg_videos())[1])
