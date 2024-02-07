@@ -49,7 +49,7 @@ class Video:
         if isinstance(index, slice):
             return list(self.iter_frames(start=index.start or 0,
                                          stop=index.stop,
-                                         jump=index.step or 1))
+                                         jump=index.step if index.step is not None else 1))
         return self.read_frame_at(index)
 
     def __repr__(self) -> str:
