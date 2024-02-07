@@ -116,6 +116,8 @@ class Video:
                     jump: int = 1) -> Generator[Frame, None, None]:
         if jump == 0:
             raise ValueError("Jump cannot be zero!")
+        if jump < 0:
+            raise ValueError("Video does not support backwards reading. You may want to use `reversed` instead.")
         self._jump_to_frame(start)
         stop = self.frame_num if stop is None else min(stop, self.frame_num)
         while self._next_frame_index() < stop:
