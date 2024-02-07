@@ -29,14 +29,10 @@ class Video:
         self._cap = None
 
     def __enter__(self) -> "Video":
-        self._cap = cv.VideoCapture(str(self.path))
-        if not self._cap.isOpened():
-            raise IOError(f"Could not open video file at {self.path}")
-        return self
+        return self.open()
 
     def __exit__(self, *exc_args) -> bool:
-        self._cap.release()
-        self._cap = None
+        self.close()
         return False
 
     def __len__(self) -> int:
@@ -72,6 +68,16 @@ class Video:
         if not success:
             raise IOError(f"Could not read frame at index {self._next_frame_index() - 1}")
         return Frame(frame, self._next_frame_index() - 1, self._current_timestamp())
+
+    def open(self) -> "Video":
+        self._cap = cv.VideoCapture(str(self.path))
+        if not self._cap.isOpened():
+            raise IOError(f"Could not open video file at {self.path}")
+        return self
+
+    def close(self) -> None:
+        self._cap.release()
+        self._cap = None
 
     @property
     def name(self) -> str:
