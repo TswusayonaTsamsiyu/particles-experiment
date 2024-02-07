@@ -147,7 +147,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 def subtract_bg(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
     for batch in chunked_even(frames, BG_BATCH_SIZE):
         print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
-        bg = img.avg([frame.image for frame in batch[::BG_JUMP]])
+        bg = img.avg(frame.image for frame in batch[::BG_JUMP])
         # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
         for frame in batch:
             yield Frame(
