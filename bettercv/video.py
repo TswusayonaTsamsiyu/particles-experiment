@@ -93,6 +93,12 @@ class Video:
     def duration(self) -> timedelta:
         return timedelta(seconds=self.frame_num / self.fps)
 
+    def index_at(self, time: Union[int, timedelta]) -> int:
+        return (time if isinstance(time, int) else time.total_seconds()) * self.fps
+
+    def timestamp_at(self, index: int) -> timedelta:
+        return timedelta(seconds=index / self.fps)
+
     def read_frame_at(self, index: int) -> Frame:
         original_index = self._next_frame_index()
         self._jump_to_frame(index)

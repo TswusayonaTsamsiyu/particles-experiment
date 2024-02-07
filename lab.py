@@ -170,8 +170,8 @@ def analyze_video(path: Path) -> None:
         print(f"Parsing {video.name}...")
         print(f"Video has {video.frame_num} frames.")
         tracks = detect_tracks(video.iter_frames(
-            start=START_TIME * video.fps,
-            stop=(START_TIME + NUM_SECONDS) * video.fps
+            start=video.index_at(START_TIME),
+            stop=video.index_at(START_TIME + NUM_SECONDS)
         ))
         print(f"Num tracks found: {len(tracks)}")
         particle_events = [ParticleEvent(track)
