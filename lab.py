@@ -70,7 +70,7 @@ def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -
                 and (frame.index - track.end.index == 1))
 
 
-def join_close_contours(contours: Sequence[Contour]) -> MutableSequence[Contour]:
+def join_close_contours(contours: Sequence[Contour]) -> Sequence[Contour]:
     groups = []
     for i, c1 in enumerate(contours):
         close_indices = [j for j, c2 in tuple(enumerate(contours))[i + 1:]
@@ -154,10 +154,8 @@ def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
     for frame in subtract_bg(map(preprocess, frames)):
         thresh, binary = img.threshold_otsu(frame.image)
         if has_tracks(thresh):
-            contours = find_tracks(binary)
-            update_tracks(tracks,
-                          join_close_contours(contours) if len(contours) > 1 else contours,
-                          frame, binary)
+            contours = join_close_contours(find_tracks(binary))
+            update_tracks(tracks, contours, frame, binary)
     return tracks
 
 
@@ -168,7 +166,7 @@ def main() -> None:
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
         tracks = detect_tracks(video.iter_frames(
-            start=START_TIME * video.fps, 
+            start=START_TIME * video.fps,
             stop=(START_TIME + NUM_SECONDS) * video.fps
         ))
         print(f"Num tracks found: {len(tracks)}")
