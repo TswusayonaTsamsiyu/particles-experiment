@@ -50,7 +50,7 @@ def has_tracks(threshold: float) -> bool:
     return threshold > MIN_THRESHOLD
 
 
-def find_tracks(binary: Frame) -> Sequence[Contour]:
+def find_prominent_contours(binary: Frame) -> Sequence[Contour]:
     return tuple(contour
                  for contour in find_contours(binary.image, external_only=True)
                  if contour.area() > MIN_CONTOUR_SIZE)
@@ -158,7 +158,7 @@ def binaries_with_tracks(frames: Iterable[Frame]) -> Generator[Frame, None, None
 def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
     tracks: List[Track] = []
     for binary in binaries_with_tracks(subtract_bg(map(preprocess, frames))):
-        contours = join_close_contours(find_tracks(binary))
+        contours = join_close_contours(find_prominent_contours(binary))
         update_tracks(tracks, contours, binary)
     return tracks
 
