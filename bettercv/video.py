@@ -51,6 +51,9 @@ class Video:
     def __repr__(self) -> str:
         return f"<Video {self.name}>"
 
+    def _is_open(self) -> bool:
+        return bool(self._cap)
+
     def _get_prop(self, prop: int) -> int:
         return int(self._cap.get(prop))
 
@@ -70,14 +73,16 @@ class Video:
         return Frame(frame, self._next_frame_index() - 1, self._current_timestamp())
 
     def open(self) -> "Video":
-        self._cap = cv.VideoCapture(str(self.path))
-        if not self._cap.isOpened():
-            raise IOError(f"Could not open video file at {self.path}")
+        if not self._is_open():
+            self._cap = cv.VideoCapture(str(self.path))
+            if not self._cap.isOpened():
+                raise IOError(f"Could not open video file at {self.path}")
         return self
 
     def close(self) -> None:
-        self._cap.release()
-        self._cap = None
+        if self._is_open():
+            self._cap.release()
+            self._cap = None
 
     @property
     def name(self) -> str:
