@@ -11,21 +11,31 @@ from bettercv.contours import find_contours, draw_contours, join_contours, Conto
 from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
 
+# Video analysis window
 START_TIME = 120
 NUM_SECONDS = 15
 
+# Preprocessing
 BLUR_SIZE = 15
 KSIZE = (BLUR_SIZE, BLUR_SIZE)
 
+# Handling keyboard interaction
 ESC = 27
 CLOSE_BTN = -1
 EXIT_CODES = {ESC, CLOSE_BTN}
 
+# Tracking
 DRIFT_DISTANCE = 40
+
+# Joining
 DIST_CLOSE = 100
+
+# Filtering
 MIN_CONTOUR_SIZE = 500
 MIN_TRACK_LENGTH = 5
 MIN_THRESHOLD = 1
+
+# BG computation
 BG_JUMP = 5
 BG_BATCH_SIZE = 200
 
