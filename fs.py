@@ -1,5 +1,5 @@
+from typing import List
 from pathlib import Path
-from typing import Iterable
 
 from config import ROOT_PATH
 
@@ -11,13 +11,13 @@ def is_video(path: Path) -> bool:
     return path.suffix.lower() == ".mp4"
 
 
-def get_videos(path: Path) -> Iterable[Path]:
+def get_videos(path: Path) -> List[Path]:
     return sorted(filter(is_video, path.iterdir()))
 
 
-def get_bg_videos() -> Iterable[Path]:
+def get_bg_videos() -> List[Path]:
     return get_videos(BG_RADIATION_PATH)
 
 
-def get_rod_videos() -> Iterable[Path]:
+def get_rod_videos() -> List[Path]:
     return get_videos(ROD_RADIATION_PATH)
