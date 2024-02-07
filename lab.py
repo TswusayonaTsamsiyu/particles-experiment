@@ -38,8 +38,12 @@ def exit_for(codes: Container[int]) -> Callable[[int], None]:
 handle_key_code = exit_for(EXIT_CODES)
 
 
-def preprocess(image: Image) -> Image:
-    return img.blur(img.grayscale(image), KSIZE)
+def preprocess(frame: Frame) -> Frame:
+    return Frame(
+        img.blur(img.grayscale(frame.image), KSIZE),
+        frame.index,
+        frame.timestamp
+    )
 
 
 def has_tracks(threshold: float) -> bool:
@@ -135,16 +139,19 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 def subtract_bg(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
     for batch in chunked_even(frames, BG_BATCH_SIZE):
         print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
-        bg = preprocess(img.avg([frame.image for frame in batch[::BG_JUMP]]))
+        bg = img.avg([frame.image for frame in batch[::BG_JUMP]])
         # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
         for frame in batch:
-            yield Frame(img.subtract(preprocess(frame.image), bg),
-                        frame.index, frame.timestamp)
+            yield Frame(
+                img.subtract(frame.image, bg),
+                frame.index,
+                frame.timestamp
+            )
 
 
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
     tracks: List[Track] = []
-    for frame in subtract_bg(video.iter_frames(start=initial_bg, stop=stop)):
+    for frame in subtract_bg(map(preprocess, video.iter_frames(start=initial_bg, stop=stop))):
         thresh, binary = img.threshold_otsu(frame.image)
         if has_tracks(thresh):
             contours = find_tracks(binary)
