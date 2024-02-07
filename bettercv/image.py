@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 from functools import reduce
-from typing import Tuple, Sequence
+from typing import Tuple, Sequence, Iterable
 
 from .types import Image, Size
 
@@ -61,8 +61,12 @@ def avg(images: Sequence[Image]) -> Image:
     return avg_image
 
 
-def min(images: Sequence[Image]) -> Image:
+def min(images: Iterable[Image]) -> Image:
     return reduce(cv.min, images)
+
+
+def max(images: Iterable[Image]) -> Image:
+    return reduce(cv.max, images)
 
 
 def subtract(image1: Image, image2: Image) -> Image:
