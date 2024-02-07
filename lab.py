@@ -149,9 +149,9 @@ def subtract_bg(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
             )
 
 
-def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
+def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
     tracks: List[Track] = []
-    for frame in subtract_bg(map(preprocess, video.iter_frames(start=initial_bg, stop=stop))):
+    for frame in subtract_bg(map(preprocess, frames)):
         thresh, binary = img.threshold_otsu(frame.image)
         if has_tracks(thresh):
             contours = find_tracks(binary)
@@ -167,7 +167,10 @@ def main() -> None:
     print(f"Parsing {example_path.name}...")
     with Video(example_path) as video:
         print(f"Video has {video.frame_num} frames.")
-        tracks = detect_tracks(video, START_TIME * video.fps, (START_TIME + NUM_SECONDS) * video.fps)
+        tracks = detect_tracks(video.iter_frames(
+            start=START_TIME * video.fps, 
+            stop=(START_TIME + NUM_SECONDS) * video.fps
+        ))
         print(f"Num tracks found: {len(tracks)}")
         particle_events = [ParticleEvent(track)
                            for track in tracks
