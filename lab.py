@@ -6,7 +6,7 @@ from bettercv.track import Track
 from bettercv import image as img
 from bettercv import display as disp
 from bettercv.video import Video, Frame
-from bettercv.contours import find_contours, draw_contours, join_contours, Contour
+from bettercv.contours import find_contours, draw_contours, join_close_contours, Contour
 
 from particle import ParticleEvent
 from fs import get_bg_videos, get_rod_videos
@@ -80,22 +80,6 @@ def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -
                 and (frame.index - track.end.index == 1))
 
 
-def join_close_contours(contours: Sequence[Contour]) -> Sequence[Contour]:
-    groups = []
-    for i, c1 in enumerate(contours):
-        close_indices = [j for j, c2 in tuple(enumerate(contours))[i + 1:]
-                         if c2.is_close_to(c1, DIST_CLOSE)]
-        new_group = set(close_indices + [i])
-        disjoint_groups = []
-        for group in groups:
-            if new_group.intersection(group):
-                new_group = new_group.union(group)
-            else:
-                disjoint_groups.append(group)
-        groups = disjoint_groups + [new_group]
-    return [join_contours([contours[index] for index in group]) for group in groups]
-
-
 def update_tracks(tracks: MutableSequence[Track],
                   contours: Sequence[Contour],
                   binary: Frame) -> None:
@@ -167,7 +151,7 @@ def binaries_with_tracks(frames: Iterable[Frame]) -> Generator[Frame, None, None
 def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
     tracks: List[Track] = []
     for binary in binaries_with_tracks(subtract_bg(map(preprocess, frames))):
-        contours = join_close_contours(find_prominent_contours(binary))
+        contours = join_close_contours(find_prominent_contours(binary), DIST_CLOSE)
         update_tracks(tracks, contours, binary)
     return tracks
 

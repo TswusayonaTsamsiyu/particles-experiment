@@ -63,6 +63,22 @@ def join_contours(contours: Sequence[Contour]) -> Contour:
     return Contour(vstack([contour.points for contour in contours])).convex_hull()
 
 
+def join_close_contours(contours: Sequence[Contour], closeness: int) -> Sequence[Contour]:
+    groups = []
+    for i, c1 in enumerate(contours):
+        close_indices = [j for j, c2 in tuple(enumerate(contours))[i + 1:]
+                         if c2.is_close_to(c1, closeness)]
+        new_group = set(close_indices + [i])
+        disjoint_groups = []
+        for group in groups:
+            if new_group.intersection(group):
+                new_group = new_group.union(group)
+            else:
+                disjoint_groups.append(group)
+        groups = disjoint_groups + [new_group]
+    return [join_contours([contours[index] for index in group]) for group in groups]
+
+
 def find_contours(image: Image, external_only: bool = False) -> Sequence[Contour]:
     mode = cv.RETR_EXTERNAL if external_only else cv.RETR_TREE
     return tuple(map(Contour, cv.findContours(image, mode, cv.CHAIN_APPROX_SIMPLE)[0]))
