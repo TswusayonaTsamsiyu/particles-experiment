@@ -50,8 +50,9 @@ def has_tracks(threshold: float) -> bool:
     return threshold > MIN_THRESHOLD
 
 
-def find_tracks(binary: Image) -> Tuple[Contour]:
-    return tuple(contour for contour in find_contours(binary, external_only=True)
+def find_tracks(binary: Frame) -> Sequence[Contour]:
+    return tuple(contour
+                 for contour in find_contours(binary.image, external_only=True)
                  if contour.area() > MIN_CONTOUR_SIZE)
 
 
@@ -88,18 +89,16 @@ def join_close_contours(contours: Sequence[Contour]) -> Sequence[Contour]:
 
 def update_tracks(tracks: MutableSequence[Track],
                   contours: Sequence[Contour],
-                  frame: Frame,
-                  binary: Image) -> None:
+                  binary: Frame) -> None:
     for contour in contours:
-        close = find_close_tracks(contour, frame, tracks)
+        close = find_close_tracks(contour, binary, tracks)
         if len(close) > 1:
-            display_frame(frame, binary, [track.end.contour for track in close])
             raise Exception("Multiple tracks detected for same contour!")
         if len(close) == 1:
-            close[0].record(contour, frame)
+            close[0].record(contour, binary)
         else:
             new_track = Track()
-            new_track.record(contour, frame)
+            new_track.record(contour, binary)
             tracks.append(new_track)
 
 
@@ -149,13 +148,18 @@ def subtract_bg(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
             )
 
 
-def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
-    tracks: List[Track] = []
-    for frame in subtract_bg(map(preprocess, frames)):
+def binaries_with_tracks(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
+    for frame in frames:
         thresh, binary = img.threshold_otsu(frame.image)
         if has_tracks(thresh):
-            contours = join_close_contours(find_tracks(binary))
-            update_tracks(tracks, contours, frame, binary)
+            yield Frame(binary, frame.index, frame.timestamp)
+
+
+def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
+    tracks: List[Track] = []
+    for binary in binaries_with_tracks(subtract_bg(map(preprocess, frames))):
+        contours = join_close_contours(find_tracks(binary))
+        update_tracks(tracks, contours, binary)
     return tracks
 
 
