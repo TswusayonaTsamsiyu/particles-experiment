@@ -114,6 +114,8 @@ class Video:
                     start: int = 0,
                     stop: int = None,
                     jump: int = 1) -> Generator[Frame, None, None]:
+        if jump == 0:
+            raise ValueError("Jump cannot be zero!")
         self._jump_to_frame(start)
         stop = self.frame_num if stop is None else min(stop, self.frame_num)
         while self._next_frame_index() < stop:
