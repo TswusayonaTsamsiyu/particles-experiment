@@ -97,7 +97,6 @@ def update_tracks(tracks: MutableSequence[Track],
             new_track = Track()
             new_track.record(contour, frame)
             tracks.append(new_track)
-            # display_frame(frame, binary, contours)
 
 
 def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
@@ -146,11 +145,8 @@ def subtract_bg(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
 def detect_tracks(video: Video, initial_bg: int, stop: int = None) -> List[Track]:
     tracks: List[Track] = []
     for frame in subtract_bg(video.iter_frames(start=initial_bg, stop=stop)):
-        # print(f"Processing {frame}")
         thresh, binary = img.threshold_otsu(frame.image)
-        # print(f"Threshold: {thresh}")
         if has_tracks(thresh):
-            # print("Tracks detected")
             contours = find_tracks(binary)
             update_tracks(tracks,
                           join_close_contours(contours) if len(contours) > 1 else contours,
