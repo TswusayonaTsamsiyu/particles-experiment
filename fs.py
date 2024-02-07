@@ -12,7 +12,7 @@ def is_video(path: Path) -> bool:
 
 
 def get_videos(path: Path) -> Iterable[Path]:
-    return filter(is_video, path.iterdir())
+    return sorted(filter(is_video, path.iterdir()))
 
 
 def get_bg_videos() -> Iterable[Path]:
