@@ -70,17 +70,17 @@ def find_prominent_contours(binary: Frame) -> Sequence[Contour]:
 #     handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
 
 
-def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -> List[Track]:
+def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track]) -> List[Track]:
     return list(track for track in tracks
                 if (track.end.contour.centroid().distance_to(contour.centroid()) < DRIFT_DISTANCE)
-                and (frame.index - track.end.index == 1))
+                and (index - track.end.index == 1))
 
 
 def update_tracks(tracks: MutableSequence[Track],
                   contours: Sequence[Contour],
                   binary: Frame) -> None:
     for contour in contours:
-        close = find_close_tracks(contour, binary, tracks)
+        close = find_close_tracks(contour, binary.index, tracks)
         if len(close) > 1:
             raise Exception("Multiple tracks detected for same contour!")
         if len(close) == 1:
