@@ -88,15 +88,15 @@ class Video:
         return self._get_prop(cv.CAP_PROP_FRAME_COUNT)
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self._get_prop(cv.CAP_PROP_FRAME_WIDTH)
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self._get_prop(cv.CAP_PROP_FRAME_HEIGHT)
 
     @property
-    def fps(self):
+    def fps(self) -> int:
         return self._get_prop(cv.CAP_PROP_FPS)
 
     @property
