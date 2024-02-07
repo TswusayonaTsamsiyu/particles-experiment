@@ -63,6 +63,12 @@ def find_prominent_contours(binary: Frame) -> Sequence[Contour]:
                  if contour.area() > MIN_CONTOUR_SIZE)
 
 
+def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
+    return (contour for contour in contours
+            if (contour.length() / contour.width() > 3)
+            and (contour.width() < 100))
+
+
 # def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
 #     right_window = disp.Window(draw_contours(binary, contours),
 #                                title=f"Binary {frame} with contours")
@@ -79,7 +85,7 @@ def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track]) -> 
 
 
 def update_tracks(tracks: MutableSequence[Track],
-                  contours: Sequence[Contour],
+                  contours: Iterable[Contour],
                   binary: Frame) -> None:
     for contour in contours:
         close = find_close_tracks(contour, binary.index, tracks)
@@ -145,7 +151,15 @@ def binaries_with_tracks(frames: Iterable[Frame]) -> Generator[Frame, None, None
 def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
     tracks: List[Track] = []
     for binary in binaries_with_tracks(subtract_bg(map(preprocess, frames))):
-        contours = join_close_contours(find_prominent_contours(binary), DIST_CLOSE)
+        contours = retain_track_like(join_close_contours(find_prominent_contours(binary), DIST_CLOSE))
+        # for contour in contours:
+        #     print(", ".join(map(str, (contour.area(), contour.width(), contour.length()))))
+        #     disp.show([
+        #         disp.fit_to_screen(disp.Window(
+        #             draw_contours(binary.image, [contour], (0, 0, 255)),
+        #             "Contour"
+        #         ))
+        #     ])
         update_tracks(tracks, contours, binary)
     return tracks
 
