@@ -48,13 +48,21 @@ class Video:
                                          jump=index.step if index.step is not None else 1))
         return self.read_frame_at(index)
 
+    def __str__(self):
+        return repr(self).strip("<>")
+
     def __repr__(self) -> str:
         return f"<Video {self.name}>"
 
     def _is_open(self) -> bool:
         return bool(self._cap)
 
+    def _raise_if_closed(self) -> None:
+        if not self._is_open():
+            raise RuntimeError(f"{self} is closed.")
+
     def _get_prop(self, prop: int) -> int:
+        self._raise_if_closed()
         return int(self._cap.get(prop))
 
     def _current_timestamp(self) -> timedelta:
@@ -115,6 +123,7 @@ class Video:
         return timedelta(seconds=index / self.fps)
 
     def read_frame_at(self, index: int) -> Frame:
+        self._raise_if_closed()
         original_index = self._next_frame_index()
         self._jump_to_frame(index)
         frame = self._read_next()
@@ -129,6 +138,7 @@ class Video:
             raise ValueError("Jump cannot be zero!")
         if jump < 0:
             raise ValueError("Video does not support backwards reading. You may want to use `reversed` instead.")
+        self._raise_if_closed()
         self._jump_to_frame(start)
         stop = self.frame_num if stop is None else min(stop, self.frame_num)
         while self._next_frame_index() < stop:
