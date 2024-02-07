@@ -13,6 +13,9 @@ class Frame:
     index: int
     timestamp: timedelta
 
+    def with_image(self, image: Image) -> "Frame":
+        return Frame(image, self.index, self.timestamp)
+
     def __str__(self) -> str:
         return repr(self).strip("<>")
 

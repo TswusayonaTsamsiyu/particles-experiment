@@ -48,11 +48,7 @@ handle_key_code = exit_for(EXIT_CODES)
 
 
 def preprocess(frame: Frame) -> Frame:
-    return Frame(
-        img.blur(img.grayscale(frame.image), KSIZE),
-        frame.index,
-        frame.timestamp
-    )
+    return frame.with_image(img.blur(img.grayscale(frame.image), KSIZE))
 
 
 def has_tracks(threshold: float) -> bool:
@@ -134,18 +130,14 @@ def subtract_bg(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
         bg = img.avg(frame.image for frame in batch[::BG_JUMP])
         # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
         for frame in batch:
-            yield Frame(
-                img.subtract(frame.image, bg),
-                frame.index,
-                frame.timestamp
-            )
+            yield frame.with_image(img.subtract(frame.image, bg))
 
 
 def binaries_with_tracks(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
     for frame in frames:
         thresh, binary = img.threshold_otsu(frame.image)
         if has_tracks(thresh):
-            yield Frame(binary, frame.index, frame.timestamp)
+            yield frame.with_image(binary)
 
 
 def detect_tracks(frames: Iterable[Frame]) -> List[Track]:
