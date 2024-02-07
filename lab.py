@@ -48,7 +48,7 @@ def has_tracks(threshold: float) -> bool:
 
 def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
     # print(f"Processing frame {frame.index}")
-    return img.threshold_otsu(img.subtract(prepare(frame.pixels), bg))
+    return img.threshold_otsu(img.subtract(prepare(frame.image), bg))
 
 
 def find_tracks(binary: Image) -> Tuple[Contour]:
@@ -59,7 +59,7 @@ def find_tracks(binary: Image) -> Tuple[Contour]:
 def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
     right_window = disp.Window(draw_contours(binary, contours),
                                title=f"Binary {frame} with contours")
-    left_window = disp.Window(frame.pixels,
+    left_window = disp.Window(frame.image,
                               title=f"Prepared {frame}",
                               position=disp.left_of(right_window))
     handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
@@ -109,7 +109,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
     for event in events:
         relevant_frame = video.read_frame_at(event.best_snapshot.index)
         handle_key_code(disp.show([disp.fit_to_screen(disp.Window(
-            draw_contours(img.abc(relevant_frame.pixels), [event.best_snapshot.contour]),
+            draw_contours(img.abc(relevant_frame.image), [event.best_snapshot.contour]),
             str(event.best_snapshot)
         ))]))
 
@@ -141,7 +141,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 def iter_batches(frames: Iterable[Frame]) -> Generator[Tuple[Frame, Image], None, None]:
     for batch in chunked_even(frames, BG_BATCH_SIZE):
         print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
-        bg = prepare(img.avg([frame.pixels for frame in batch[::BG_JUMP]]))
+        bg = prepare(img.avg([frame.image for frame in batch[::BG_JUMP]]))
         # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
         for frame in batch:
             yield frame, bg

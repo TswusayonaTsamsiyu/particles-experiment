@@ -9,7 +9,7 @@ from .types import Image
 
 @dataclass
 class Frame:
-    pixels: Image
+    image: Image
     index: int
     timestamp: timedelta
 
