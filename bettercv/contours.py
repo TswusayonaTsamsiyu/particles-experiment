@@ -14,13 +14,13 @@ class Contour:
     points: ndarray
 
     def axes(self) -> Sequence[float]:
-        return self.min_area_rect()[1]
+        return sorted(self.min_area_rect()[1])
 
     def width(self) -> float:
-        return self.axes()[1]
+        return self.axes()[0]
 
     def length(self) -> float:
-        return self.axes()[0]
+        return self.axes()[1]
 
     def area(self) -> float:
         return cv.contourArea(self.points)
