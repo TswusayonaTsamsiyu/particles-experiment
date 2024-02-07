@@ -38,17 +38,17 @@ def exit_for(codes: Container[int]) -> Callable[[int], None]:
 handle_key_code = exit_for(EXIT_CODES)
 
 
-def preprocess(frame: Image) -> Image:
-    return img.blur(img.grayscale(frame), KSIZE)
+def preprocess(image: Image) -> Image:
+    return img.blur(img.grayscale(image), KSIZE)
 
 
 def has_tracks(threshold: float) -> bool:
     return threshold > MIN_THRESHOLD
 
 
-def process_frame(frame: Image, bg: Image) -> Tuple[float, Image]:
+def process_frame(image: Image, bg: Image) -> Tuple[float, Image]:
     # print(f"Processing frame {frame.index}")
-    return img.threshold_otsu(img.subtract(frame, bg))
+    return img.threshold_otsu(img.subtract(image, bg))
 
 
 def find_tracks(binary: Image) -> Tuple[Contour]:
