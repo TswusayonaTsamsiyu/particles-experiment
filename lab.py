@@ -38,7 +38,7 @@ def exit_for(codes: Container[int]) -> Callable[[int], None]:
 handle_key_code = exit_for(EXIT_CODES)
 
 
-def prepare(frame: Image) -> Image:
+def preprocess(frame: Image) -> Image:
     return img.blur(img.grayscale(frame), KSIZE)
 
 
@@ -48,7 +48,7 @@ def has_tracks(threshold: float) -> bool:
 
 def process_frame(frame: Frame, bg: Image) -> Tuple[float, Image]:
     # print(f"Processing frame {frame.index}")
-    return img.threshold_otsu(img.subtract(prepare(frame.image), bg))
+    return img.threshold_otsu(img.subtract(preprocess(frame.image), bg))
 
 
 def find_tracks(binary: Image) -> Tuple[Contour]:
@@ -141,7 +141,7 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
 def iter_batches(frames: Iterable[Frame]) -> Generator[Tuple[Frame, Image], None, None]:
     for batch in chunked_even(frames, BG_BATCH_SIZE):
         print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
-        bg = prepare(img.avg([frame.image for frame in batch[::BG_JUMP]]))
+        bg = preprocess(img.avg([frame.image for frame in batch[::BG_JUMP]]))
         # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
         for frame in batch:
             yield frame, bg
