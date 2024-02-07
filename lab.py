@@ -1,8 +1,7 @@
 from time import time
 from more_itertools import chunked_even
-from typing import Sequence, Tuple, List, MutableSequence, Iterable, Container, Callable, Generator
+from typing import Sequence, List, MutableSequence, Iterable, Container, Callable, Generator
 
-from bettercv.types import Image
 from bettercv.track import Track
 from bettercv import image as img
 from bettercv import display as disp
@@ -56,13 +55,13 @@ def find_prominent_contours(binary: Frame) -> Sequence[Contour]:
                  if contour.area() > MIN_CONTOUR_SIZE)
 
 
-def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
-    right_window = disp.Window(draw_contours(binary, contours),
-                               title=f"Binary {frame} with contours")
-    left_window = disp.Window(frame.image,
-                              title=f"Prepared {frame}",
-                              position=disp.left_of(right_window))
-    handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
+# def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
+#     right_window = disp.Window(draw_contours(binary, contours),
+#                                title=f"Binary {frame} with contours")
+#     left_window = disp.Window(frame.image,
+#                               title=f"Prepared {frame}",
+#                               position=disp.left_of(right_window))
+#     handle_key_code(disp.show(map(disp.fit_to_screen, (right_window, left_window))))
 
 
 def find_close_tracks(contour: Contour, frame: Frame, tracks: Iterable[Track]) -> List[Track]:
