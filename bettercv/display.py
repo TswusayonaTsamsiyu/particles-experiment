@@ -1,5 +1,6 @@
 import cv2 as cv
 from typing import Iterable
+from functools import cache
 from screeninfo import get_monitors
 
 from .image import resize
@@ -79,10 +80,12 @@ def left_of(window: Window) -> Position:
     return Position(window.position.x - window.size.width // 2 - WINDOW_SEP, window.position.y)
 
 
+@cache
 def get_screen_size() -> Size:
     primary_monitor = next(filter(lambda m: m.is_primary, get_monitors()))
     return Size(primary_monitor.width, primary_monitor.height)
 
 
+@cache
 def screen_center() -> Position:
     return Position(*(get_screen_size() // 2))
