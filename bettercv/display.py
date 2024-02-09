@@ -22,16 +22,14 @@ class Window:
         self.position = position or screen_center()
 
 
-def show(windows: Iterable[Window]) -> int:
+def show(windows: Iterable[Window], destroy=True) -> int:
     windows = tuple(windows)
     for window in windows:
         show_window(window)
     key_code = wait_key()
-    for window in windows:
-        try:
-            destroy(window)
-        except cv.error:
-            pass
+    if destroy:
+        for window in windows:
+            destroy_window(window)
     return key_code
 
 
@@ -47,8 +45,11 @@ def fix_position(window: Window) -> Position:
                     max(0, window.position.y - window.size.height // 2))
 
 
-def destroy(window: Window) -> None:
-    cv.destroyWindow(window.title)
+def destroy_window(window: Window) -> None:
+    try:
+        cv.destroyWindow(window.title)
+    except cv.error:
+        pass
 
 
 def wait_key() -> int:
