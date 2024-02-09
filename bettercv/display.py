@@ -38,6 +38,7 @@ def show_window(window: Window) -> None:
     cv.imshow(window.title, resize(window.image, window.size))
     cv.resizeWindow(window.title, *window.size)
     cv.moveWindow(window.title, *fix_position(window))
+    cv.setWindowProperty(window.title, cv.WND_PROP_VISIBLE, 1)
 
 
 def fix_position(window: Window) -> Position:
