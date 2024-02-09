@@ -22,11 +22,11 @@ class Window:
         self.position = position or screen_center()
 
 
-def show(windows: Iterable[Window], destroy=True) -> int:
+def show(windows: Iterable[Window], destroy: bool = True, timeout: int = 0) -> int:
     windows = tuple(windows)
     for window in windows:
         show_window(window)
-    key_code = wait_key()
+    key_code = cv.waitKey(timeout)
     if destroy:
         for window in windows:
             destroy_window(window)
@@ -50,10 +50,6 @@ def destroy_window(window: Window) -> None:
         cv.destroyWindow(window.title)
     except cv.error:
         pass
-
-
-def wait_key() -> int:
-    return cv.waitKey(0)
 
 
 def get_image_size(image: Image) -> Size:
