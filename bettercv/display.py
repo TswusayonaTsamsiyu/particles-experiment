@@ -3,8 +3,8 @@ from typing import Iterable
 from functools import cache
 from screeninfo import get_monitors
 
-from .image import resize
 from .types import Image, Size, Position
+from .image import resize, get_image_size
 
 SCALE_FACTOR = 0.85
 WINDOW_SEP = 5
@@ -51,11 +51,6 @@ def destroy_window(window: Window) -> None:
         cv.destroyWindow(window.title)
     except cv.error:
         pass
-
-
-def get_image_size(image: Image) -> Size:
-    height, width, *channels = image.shape
-    return Size(width, height)
 
 
 def fit_to_screen(window: Window) -> Window:

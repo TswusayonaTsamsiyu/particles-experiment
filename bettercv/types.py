@@ -25,3 +25,7 @@ class Size(namedtuple("SizeBase", "width height")):
     @property
     def aspect_ratio(self) -> float:
         return self.width / self.height
+
+    @property
+    def area(self) -> int:
+        return self.width * self.height

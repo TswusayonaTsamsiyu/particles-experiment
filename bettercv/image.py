@@ -84,8 +84,15 @@ def crop(image: Image, top: int, bottom: int) -> Image:
 
 
 def scale(image: Image, factor: float) -> Image:
-    return cv.resize(image, None, fx=factor, fy=factor)
+    interpolation = cv.INTER_AREA if factor < 1 else cv.INTER_LINEAR
+    return cv.resize(image, None, fx=factor, fy=factor, interpolation=interpolation)
 
 
 def resize(image: Image, size: Size) -> Image:
-    return cv.resize(image, size)
+    interpolation = cv.INTER_AREA if size.area < get_image_size(image).area else cv.INTER_LINEAR
+    return cv.resize(image, size, interpolation=interpolation)
+
+
+def get_image_size(image: Image) -> Size:
+    height, width, *channels = image.shape
+    return Size(width, height)
