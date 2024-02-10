@@ -41,6 +41,9 @@ MIN_THRESHOLD = 1
 BG_JUMP = 5
 BG_BATCH_SIZE = 200
 
+# Resizing
+SCALE_FACTOR = 0.6
+
 
 def exit_for(codes: Container[int]) -> Callable[[int], None]:
     return lambda key_code: exit() if key_code in codes else None
@@ -50,7 +53,7 @@ handle_key_code = exit_for(EXIT_CODES)
 
 
 def preprocess(frame: Frame) -> Frame:
-    return frame.with_image(img.blur(img.grayscale(frame.image), KSIZE))
+    return frame.with_image(img.blur(img.grayscale(img.scale(frame.image, SCALE_FACTOR)), KSIZE))
 
 
 def has_tracks(threshold: float) -> bool:
@@ -103,7 +106,8 @@ def display_particles(video: Video, events: Iterable[ParticleEvent]) -> None:
     for event in events:
         relevant_frame = video.read_frame_at(event.best_snapshot.index)
         handle_key_code(disp.show([disp.fit_to_screen(disp.Window(
-            draw_contours(img.abc(relevant_frame.image), [event.best_snapshot.contour]),
+            draw_contours(img.abc(img.scale(relevant_frame.image, SCALE_FACTOR)),
+                          [event.best_snapshot.contour]),
             str(event.best_snapshot)
         ))]))
 
