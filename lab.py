@@ -11,7 +11,7 @@ from bettercv.video import Video, Frame
 from bettercv.contours import find_contours, draw_contours, join_close_contours, Contour
 
 from particle import ParticleEvent
-from fs import get_bg_videos, get_rod_videos
+from fs import get_bg_videos, get_rod_videos, save_particles
 
 # Video analysis window
 START_TIME = 120
@@ -184,6 +184,7 @@ def analyze_video(path: Path) -> None:
         print(f"Num particle events found: {len(particle_events)}")
         print(f"Finished in {time() - start} seconds.")
         display_particles(video, particle_events)
+        save_particles(particle_events, video)
 
 
 if __name__ == '__main__':

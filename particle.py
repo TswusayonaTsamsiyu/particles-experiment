@@ -30,11 +30,11 @@ class ParticleEvent:
 
     @property
     def width(self) -> float:
-        return self.best_snapshot.contour.width()
+        return self.best_snapshot.contour.width
 
     @property
     def length(self) -> float:
-        return self.best_snapshot.contour.length()
+        return self.best_snapshot.contour.length
 
     @property
     def curvature(self):
