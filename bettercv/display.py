@@ -19,7 +19,7 @@ class Window:
         self.image = image
         self.title = title
         self.size = size or get_image_size(image)
-        self.position = position or screen_center()
+        self.center = position or screen_center()
         self._shown = False
 
     def fit_to_screen(self) -> "Window":
@@ -31,7 +31,7 @@ class Window:
         return Window(self.image,
                       self.title,
                       self.size * scaling * SCALE_FACTOR,
-                      self.position)
+                      self.center)
 
     def show(self, destroy: bool = True, timeout: int = 0) -> int:
         self._show()
@@ -45,18 +45,19 @@ class Window:
             cv.destroyWindow(self.title)
         self._shown = False
 
+    @property
+    def position(self) -> Position:
+        return Position(max(0, self.center.x - self.size.width // 2),
+                        max(0, self.center.y - self.size.height // 2))
+
     def _show(self) -> None:
         if not self._shown:
             cv.namedWindow(self.title, cv.WINDOW_NORMAL)
             cv.imshow(self.title, resize(self.image, self.size))
             cv.resizeWindow(self.title, *self.size)
-            cv.moveWindow(self.title, *self._fix_position())
+            cv.moveWindow(self.title, *self.position)
         cv.setWindowProperty(self.title, cv.WND_PROP_VISIBLE, 1)
         self._shown = True
-
-    def _fix_position(self) -> Position:
-        return Position(max(0, self.position.x - self.size.width // 2),
-                        max(0, self.position.y - self.size.height // 2))
 
 
 def show(windows: Iterable[Window], destroy: bool = True, timeout: int = 0) -> int:
@@ -79,8 +80,8 @@ def show_window(window: Window) -> None:
 
 
 def fix_position(window: Window) -> Position:
-    return Position(max(0, window.position.x - window.size.width // 2),
-                    max(0, window.position.y - window.size.height // 2))
+    return Position(max(0, window.center.x - window.size.width // 2),
+                    max(0, window.center.y - window.size.height // 2))
 
 
 def destroy_window(window: Window) -> None:
@@ -91,11 +92,11 @@ def destroy_window(window: Window) -> None:
 
 
 def right_of(window: Window) -> Position:
-    return Position(window.position.x + window.size.width // 2 + WINDOW_SEP, window.position.y)
+    return Position(window.center.x + window.size.width // 2 + WINDOW_SEP, window.center.y)
 
 
 def left_of(window: Window) -> Position:
-    return Position(window.position.x - window.size.width // 2 - WINDOW_SEP, window.position.y)
+    return Position(window.center.x - window.size.width // 2 - WINDOW_SEP, window.center.y)
 
 
 @cache
