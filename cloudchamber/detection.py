@@ -4,7 +4,7 @@ from typing import Iterable, Sequence, MutableSequence, List, Generator
 import bettercv.image as img
 from bettercv.track import Track
 from bettercv.video import Frame
-from bettercv.display import Window, show, fit_to_screen
+from bettercv.display import Window, show
 from bettercv.contours import Contour, find_contours, join_close_contours
 
 from .config import Config
@@ -62,7 +62,7 @@ def subtract_bg(frames: Iterable[Frame], config: Config) -> Generator[Frame, Non
             print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
         bg = img.avg(frame.image for frame in batch[::config.bg_jump])
         if config.display:
-            show([fit_to_screen(Window(bg, "Avg BG"))])
+            Window(bg, "Avg BG").fit_to_screen().show()
         for frame in batch:
             yield frame.with_image(img.subtract(frame.image, bg))
 

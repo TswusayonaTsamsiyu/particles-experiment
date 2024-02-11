@@ -20,6 +20,43 @@ class Window:
         self.title = title
         self.size = size or get_image_size(image)
         self.position = position or screen_center()
+        self._shown = False
+
+    def fit_to_screen(self) -> "Window":
+        screen_size = get_screen_size()
+        if self.size.aspect_ratio > screen_size.aspect_ratio:
+            scaling = screen_size.width / self.size.width
+        else:
+            scaling = screen_size.height / self.size.height
+        return Window(self.image,
+                      self.title,
+                      self.size * scaling * SCALE_FACTOR,
+                      self.position)
+
+    def show(self, destroy: bool = True, timeout: int = 0) -> int:
+        self._show()
+        key_code = cv.waitKey(timeout)
+        if destroy:
+            destroy_window(self)
+        return key_code
+
+    def destroy(self) -> None:
+        if self._shown:
+            cv.destroyWindow(self.title)
+        self._shown = False
+
+    def _show(self) -> None:
+        if not self._shown:
+            cv.namedWindow(self.title, cv.WINDOW_NORMAL)
+            cv.imshow(self.title, resize(self.image, self.size))
+            cv.resizeWindow(self.title, *self.size)
+            cv.moveWindow(self.title, *self._fix_position())
+        cv.setWindowProperty(self.title, cv.WND_PROP_VISIBLE, 1)
+        self._shown = True
+
+    def _fix_position(self) -> Position:
+        return Position(max(0, self.position.x - self.size.width // 2),
+                        max(0, self.position.y - self.size.height // 2))
 
 
 def show(windows: Iterable[Window], destroy: bool = True, timeout: int = 0) -> int:
@@ -51,18 +88,6 @@ def destroy_window(window: Window) -> None:
         cv.destroyWindow(window.title)
     except cv.error:
         pass
-
-
-def fit_to_screen(window: Window) -> Window:
-    screen_size = get_screen_size()
-    if window.size.aspect_ratio > screen_size.aspect_ratio:
-        scaling = screen_size.width / window.size.width
-    else:
-        scaling = screen_size.height / window.size.height
-    return Window(window.image,
-                  window.title,
-                  window.size * scaling * SCALE_FACTOR,
-                  window.position)
 
 
 def right_of(window: Window) -> Position:
