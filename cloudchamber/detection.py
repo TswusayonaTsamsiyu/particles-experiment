@@ -4,6 +4,7 @@ from typing import Iterable, Sequence, MutableSequence, List, Generator
 import bettercv.image as img
 from bettercv.track import Track
 from bettercv.video import Frame
+from bettercv.display import Window, show, fit_to_screen
 from bettercv.contours import Contour, find_contours, join_close_contours
 
 from .config import Config
@@ -57,9 +58,11 @@ def update_tracks(tracks: MutableSequence[Track],
 
 def subtract_bg(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
     for batch in chunked_even(frames, config.bg_batch_size):
-        print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
+        if config.prints:
+            print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
         bg = img.avg(frame.image for frame in batch[::config.bg_jump])
-        # disp.show([disp.fit_to_screen(disp.Window(bg, "Avg BG"))])
+        if config.display:
+            show([fit_to_screen(Window(bg, "Avg BG"))])
         for frame in batch:
             yield frame.with_image(img.subtract(frame.image, bg))
 

@@ -19,6 +19,9 @@ class Config:
     bg_batch_size: int = 200
     # Resizing
     scale_factor: float = 0.6
+    # Debug
+    prints: bool = True
+    display: bool = False
 
     @classmethod
     def merge(cls, config: "Dict") -> "Config":
