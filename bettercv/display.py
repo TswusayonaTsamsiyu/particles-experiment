@@ -55,7 +55,7 @@ def destroy_window(window: Window) -> None:
 
 def fit_to_screen(window: Window) -> Window:
     screen_size = get_screen_size()
-    if window.size.aspect_ratio > window.size.aspect_ratio:
+    if window.size.aspect_ratio > screen_size.aspect_ratio:
         scaling = screen_size.width / window.size.width
     else:
         scaling = screen_size.height / window.size.height
