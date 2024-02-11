@@ -18,8 +18,8 @@ class Window:
                  position: Position = None) -> None:
         self.image = image
         self.title = title
-        self.size = size or get_image_size(image)
-        self.center = position or screen_center()
+        self._size = size
+        self._center = position
 
     def show(self, auto_close: bool = True, timeout: int = 0) -> int:
         _show_window(self)
@@ -48,6 +48,14 @@ class Window:
     def bring_to_front(self) -> "Window":
         cv.setWindowProperty(self.title, cv.WND_PROP_TOPMOST, 1)
         return self
+
+    @property
+    def size(self) -> Size:
+        return self._size or get_image_size(self.image)
+
+    @property
+    def center(self) -> Position:
+        return self._center or screen_center()
 
     @property
     def position(self) -> Position:
