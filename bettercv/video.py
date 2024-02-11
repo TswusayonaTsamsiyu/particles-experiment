@@ -139,7 +139,7 @@ class Video:
         if jump < 0:
             raise ValueError("Video does not support backwards reading. You may want to use `reversed` instead.")
         self._raise_if_closed()
-        self._jump_to_frame(start)
+        self._jump_to_frame(start or 0)
         stop = self.frame_num if stop is None else min(stop, self.frame_num)
         while self._next_frame_index() < stop:
             frame = self._read_next()
