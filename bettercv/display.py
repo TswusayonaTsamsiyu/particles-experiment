@@ -20,7 +20,19 @@ class Window:
         self.title = title
         self.size = size or get_image_size(image)
         self.center = position or screen_center()
-        self._shown = False
+
+    def show(self, auto_close: bool = True, timeout: int = 0) -> int:
+        _show_window(self)
+        key_code = cv.waitKey(timeout)
+        if auto_close:
+            self.close()
+        return key_code
+
+    def close(self) -> None:
+        try:
+            cv.destroyWindow(self.title)
+        except cv.error:
+            pass
 
     def fit_to_screen(self) -> "Window":
         screen_size = get_screen_size()
@@ -33,62 +45,41 @@ class Window:
                       self.size * scaling * SCALE_FACTOR,
                       self.center)
 
-    def show(self, destroy: bool = True, timeout: int = 0) -> int:
-        self._show()
-        key_code = cv.waitKey(timeout)
-        if destroy:
-            destroy_window(self)
-        return key_code
-
-    def destroy(self) -> None:
-        if self._shown:
-            cv.destroyWindow(self.title)
-        self._shown = False
+    def bring_to_front(self) -> "Window":
+        cv.setWindowProperty(self.title, cv.WND_PROP_TOPMOST, 1)
+        return self
 
     @property
     def position(self) -> Position:
         return Position(max(0, self.center.x - self.size.width // 2),
                         max(0, self.center.y - self.size.height // 2))
 
-    def _show(self) -> None:
-        if not self._shown:
-            cv.namedWindow(self.title, cv.WINDOW_NORMAL)
-            cv.imshow(self.title, resize(self.image, self.size))
-            cv.resizeWindow(self.title, *self.size)
-            cv.moveWindow(self.title, *self.position)
-        cv.setWindowProperty(self.title, cv.WND_PROP_VISIBLE, 1)
-        self._shown = True
 
-
-def show(windows: Iterable[Window], destroy: bool = True, timeout: int = 0) -> int:
-    windows = tuple(windows)
-    for window in windows:
-        show_window(window)
-    key_code = cv.waitKey(timeout)
-    if destroy:
-        for window in windows:
-            destroy_window(window)
-    return key_code
-
-
-def show_window(window: Window) -> None:
+def _show_window(window: Window) -> Window:
     cv.namedWindow(window.title, cv.WINDOW_NORMAL)
     cv.imshow(window.title, resize(window.image, window.size))
     cv.resizeWindow(window.title, *window.size)
-    cv.moveWindow(window.title, *fix_position(window))
-    cv.setWindowProperty(window.title, cv.WND_PROP_VISIBLE, 1)
+    cv.moveWindow(window.title, *window.position)
+    return window.bring_to_front()
 
 
-def fix_position(window: Window) -> Position:
-    return Position(max(0, window.center.x - window.size.width // 2),
-                    max(0, window.center.y - window.size.height // 2))
+def show(windows: Iterable[Window], auto_close: bool = True, timeout: int = 0) -> int:
+    windows = tuple(windows)
+    for window in windows:
+        _show_window(window)
+    key_code = cv.waitKey(timeout)
+    if auto_close:
+        close(windows)
+    return key_code
 
 
-def destroy_window(window: Window) -> None:
-    try:
-        cv.destroyWindow(window.title)
-    except cv.error:
-        pass
+def close(windows: Iterable[Window]) -> None:
+    for window in windows:
+        window.close()
+
+
+def close_all() -> None:
+    cv.destroyAllWindows()
 
 
 def right_of(window: Window) -> Position:
