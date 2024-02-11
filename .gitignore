@@ -160,4 +160,4 @@ cython_debug/
 .idea/
 
 # Config file with personal environment based constants
-config.py
+root.py

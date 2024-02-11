@@ -4,7 +4,7 @@ from typing import List, Tuple, Iterable
 
 from cloudchamber.particle import ParticleEvent
 
-from config import ROOT_PATH
+from root import ROOT_PATH
 
 BG_RADIATION_PATH = ROOT_PATH / "Background"
 ROD_RADIATION_PATH = ROOT_PATH / "Rod"
