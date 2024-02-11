@@ -26,6 +26,10 @@ class Contour:
     def length(self) -> float:
         return self.axes[1]
 
+    @property
+    def angle(self):
+        return self.min_area_rect[2]
+
     @cached_property
     def area(self) -> float:
         return cv.contourArea(self.points)

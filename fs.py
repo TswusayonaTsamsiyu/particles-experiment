@@ -30,9 +30,9 @@ def get_rod_videos() -> List[Path]:
 
 
 def save_particles(particles: Iterable[ParticleEvent], video: Video) -> None:
-    (pd.DataFrame([(particle.width, particle.length,
+    (pd.DataFrame([(particle.width, particle.length, particle.angle,
                     particle.start.index, particle.start.timestamp.total_seconds(),
                     particle.end.index, particle.end.timestamp.total_seconds())
                    for particle in particles],
-                  columns=("Width", "Length", "Start Index", "Start Time", "End Index", "End Time"))
+                  columns=("Width", "Length", "Angle", "Start Index", "Start Time", "End Index", "End Time"))
      .to_csv(CSV_PATH / video.path.with_suffix(".csv").name))

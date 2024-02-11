@@ -37,6 +37,10 @@ class ParticleEvent:
         return self.best_snapshot.contour.length
 
     @property
+    def angle(self):
+        return self.best_snapshot.contour.angle
+
+    @property
     def curvature(self):
         return NotImplemented
 
