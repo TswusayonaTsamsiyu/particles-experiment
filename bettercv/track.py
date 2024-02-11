@@ -8,12 +8,11 @@ from .contours import Contour
 
 @dataclass
 class Snapshot:
-    index: int
-    timestamp: timedelta
+    frame: Frame
     contour: Contour
 
     def __repr__(self) -> str:
-        return f"<Snapshot at {self.index}, {self.timestamp}>"
+        return f"<Snapshot at {self.frame.index}, {self.frame.timestamp}>"
 
     def __str__(self) -> str:
         return repr(self).strip("<>")
@@ -39,11 +38,11 @@ class Track:
 
     @property
     def extent(self) -> int:
-        return self.end.index - self.start.index
+        return self.end.frame.index - self.start.frame.index
 
     @property
     def duration(self) -> timedelta:
-        return self.end.timestamp - self.start.timestamp
+        return self.end.frame.timestamp - self.start.frame.timestamp
 
     def record(self, contour: Contour, frame: Frame) -> None:
-        self.snapshots.append(Snapshot(frame.index, frame.timestamp, contour))
+        self.snapshots.append(Snapshot(frame, contour))
