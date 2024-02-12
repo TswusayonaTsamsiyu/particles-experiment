@@ -10,7 +10,7 @@ from cloudchamber.debugging import display_particles
 from fs import get_bg_videos, save_particles, CSV_PATH
 
 START_TIME = 120
-NUM_SECONDS = 15
+NUM_SECONDS = 20
 
 
 def analyze_video(path: Path) -> None:

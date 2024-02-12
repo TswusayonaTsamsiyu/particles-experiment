@@ -1,4 +1,4 @@
-from more_itertools import chunked_even
+from more_itertools import chunked
 from typing import Iterable, Sequence, MutableSequence, List, Generator
 
 import bettercv.image as img
@@ -57,7 +57,7 @@ def update_tracks(tracks: MutableSequence[Track],
 
 
 def subtract_bg(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
-    for batch in chunked_even(frames, config.bg_batch_size):
+    for batch in chunked(frames, config.bg_batch_size):
         if config.prints:
             print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
         bg = img.avg(frame.image for frame in batch[::config.bg_jump])
