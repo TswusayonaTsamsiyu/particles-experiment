@@ -1,10 +1,11 @@
+from pathlib import Path
 from more_itertools import chunked
 from typing import Iterable, Sequence, MutableSequence, List, Generator
 
 import bettercv.image as img
 from bettercv.track import Track
-from bettercv.video import Frame
-from bettercv.display import Window, show
+from bettercv.display import Window
+from bettercv.video import Video, Frame
 from bettercv.contours import Contour, find_contours, join_close_contours
 
 from .config import Config
@@ -84,3 +85,11 @@ def detect_tracks(frames: Iterable[Frame], **config) -> List[ParticleEvent]:
     return [ParticleEvent(track)
             for track in tracks
             if track.extent > config.min_track_length]
+
+
+def analyze_video(path: Path, start: int = 0, stop: int = None, **config) -> List[ParticleEvent]:
+    with Video(path) as video:
+        return detect_tracks(video.iter_frames(
+            start=video.index_at(start),
+            stop=video.index_at(stop)
+        ), **config)
