@@ -1,15 +1,30 @@
 from numpy import ndarray
 from collections import namedtuple
 
+# This is just an alias for an `ndarray` (for now)
 Image = ndarray
 
 
 class Position(namedtuple("PositionBase", "x y")):
+    """
+    An integer position, in pixels, inside an image or a screen.
+    This is a `namedtuple` (`pos[0] = pos.x`, `pos[1] = pos.y`).
+    """
+
     def distance_to(self, other: "Position") -> float:
+        """
+        Computes the Euclidean distance to another position.
+        """
         return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** .5
 
 
 class Size(namedtuple("SizeBase", "width height")):
+    """
+    An integer size, in pixels, of an image or a screen.
+    Supports scaling via multiplication and division, and addition of two sizes.
+    This is also a `namedtuple` (`size[0] = size.width`, `size[1] = size.height`).
+    """
+
     def __mul__(self, factor: float) -> "Size":
         return Size(int(self.width * factor), int(self.height * factor))
 
@@ -24,8 +39,14 @@ class Size(namedtuple("SizeBase", "width height")):
 
     @property
     def aspect_ratio(self) -> float:
+        """
+        The aspect ratio of the size (width / height).
+        """
         return self.width / self.height
 
     @property
     def area(self) -> int:
+        """
+        The area of the rectangle defined by this size.
+        """
         return self.width * self.height
