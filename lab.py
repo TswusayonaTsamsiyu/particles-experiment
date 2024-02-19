@@ -1,14 +1,11 @@
-from sys import argv
 from time import time
 from pathlib import Path
 from argparse import ArgumentParser
 
-from bettercv.video import Video
-
 from cloudchamber.detection import analyze_video
 from cloudchamber.debugging import display_particles
 
-from fs import get_bg_videos, save_particles, read_particles, CSV_PATH
+from fs import save_particles, read_particles, CSV_PATH
 
 START_TIME = 120
 NUM_SECONDS = 20
