@@ -17,8 +17,7 @@ NUM_SECONDS = 20
 def detect(path: Path) -> None:
     start = time()
     particles = analyze_video(path, START_TIME, START_TIME + NUM_SECONDS)
-    print(f"Finished in {time() - start} seconds")
-    print(f"Found {len(particles)} particles")
+    print(f"Found {len(particles)} particles in {time() - start} seconds")
     save_particles(particles, CSV_PATH / path.with_suffix(".csv").name)
 
 
