@@ -2,7 +2,9 @@ import pandas as pd
 from pathlib import Path
 from typing import List, Tuple, Iterable
 
-from cloudchamber.particle import ParticleEvent
+from bettercv.contours import Contour
+
+from cloudchamber.particle import ParticleTrack
 
 from root import ROOT_PATH
 
@@ -12,8 +14,7 @@ ROD_RADIATION_PATH = ROOT_PATH / "Rod"
 CSV_PATH = ROOT_PATH / "csv"
 
 _COLUMNS = ("Width", "Length", "Angle",
-            "Start Index", "Start Time",
-            "End Index", "End Time")
+            "Start Index", "End Index")
 
 
 def _is_video(path: Path) -> bool:
@@ -32,11 +33,10 @@ def get_rod_videos() -> List[Path]:
     return _get_videos(ROD_RADIATION_PATH)
 
 
-def _csv_row(particle: ParticleEvent) -> Tuple:
+def _csv_row(particle: ParticleTrack) -> Tuple:
     return (particle.width, particle.length, particle.angle,
-            particle.start.frame.index, particle.start.frame.timestamp.total_seconds(),
-            particle.end.frame.index, particle.end.frame.timestamp.total_seconds())
+            particle.start, particle.end)
 
 
-def save_particles(particles: Iterable[ParticleEvent], path: Path) -> None:
+def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
     pd.DataFrame(map(_csv_row, particles), columns=_COLUMNS).to_csv(path, index=False)

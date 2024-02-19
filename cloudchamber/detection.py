@@ -9,7 +9,7 @@ from bettercv.video import Video, Frame
 from bettercv.contours import Contour, find_contours, join_close_contours
 
 from .config import Config
-from .particle import ParticleEvent
+from .particle import ParticleTrack
 
 
 def preprocess(frame: Frame, config: Config) -> Frame:
@@ -75,19 +75,19 @@ def binaries_with_tracks(frames: Iterable[Frame], config: Config) -> Generator[F
             yield frame.with_image(binary)
 
 
-def detect_tracks(frames: Iterable[Frame], **config) -> List[ParticleEvent]:
+def detect_tracks(frames: Iterable[Frame], **config) -> List[ParticleTrack]:
     tracks: List[Track] = []
     config = Config.merge(config)
     for binary in binaries_with_tracks(subtract_bg((preprocess(frame, config) for frame in frames), config), config):
         contours = retain_track_like(
             join_close_contours(find_prominent_contours(binary, config.min_contour_size), config.dist_close))
         update_tracks(tracks, contours, binary, config)
-    return [ParticleEvent(track)
+    return [ParticleTrack.from_track(track)
             for track in tracks
             if track.extent > config.min_track_length]
 
 
-def analyze_video(path: Path, start: int = 0, stop: int = None, **config) -> List[ParticleEvent]:
+def analyze_video(path: Path, start: int = 0, stop: int = None, **config) -> List[ParticleTrack]:
     with Video(path) as video:
         return detect_tracks(video.iter_frames(
             start=video.index_at(start),
