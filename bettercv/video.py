@@ -16,11 +16,12 @@ class Frame:
         image (Image): The actual image in the frame
         index (int): The index of the frame in the video file
         timestamp (int): The timestamp of the frame in the video file
-
+        video (Path): The path to the video file from which the frame is taken
     """
     image: Image
     index: int
     timestamp: timedelta
+    video: Path
 
     def with_image(self, image: Image) -> "Frame":
         """
@@ -33,7 +34,7 @@ class Frame:
         Returns:
             A new frame object with the replaced image
         """
-        return Frame(image, self.index, self.timestamp)
+        return Frame(image, self.index, self.timestamp, self.video)
 
     def __str__(self) -> str:
         return repr(self).strip("<>")
@@ -159,7 +160,7 @@ class Video:
         success, frame = self._cap.read()
         if not success:
             raise OSError(f"Could not read frame at index {self._next_frame_index() - 1}")
-        return Frame(frame, self._next_frame_index() - 1, self._current_timestamp())
+        return Frame(frame, self._next_frame_index() - 1, self._current_timestamp(), self.path)
 
     def open(self) -> "Video":
         """
