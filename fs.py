@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 from typing import List, Tuple, Iterable
 
+from bettercv.track import Snapshot
 from bettercv.contours import Contour
 
 from cloudchamber.particle import ParticleTrack
@@ -46,3 +47,8 @@ def _csv_row(particle: ParticleTrack) -> Tuple:
 
 def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
     pd.DataFrame(map(_csv_row, particles), columns=_COLUMNS).to_csv(path, index=False)
+
+
+def read_particles(path: Path) -> List[ParticleTrack]:
+    return [ParticleTrack((row[3], row[4]), Snapshot(row[5], Contour(row[6])))
+            for row in pd.read_csv(path).iterrows()]
