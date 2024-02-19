@@ -14,7 +14,8 @@ ROD_RADIATION_PATH = ROOT_PATH / "Rod"
 CSV_PATH = ROOT_PATH / "csv"
 
 _COLUMNS = ("Width", "Length", "Angle",
-            "Start Index", "End Index")
+            "Start Index", "End Index",
+            "Snapshot Index", "Contour")
 
 
 def _is_video(path: Path) -> bool:
@@ -33,9 +34,14 @@ def get_rod_videos() -> List[Path]:
     return _get_videos(ROD_RADIATION_PATH)
 
 
+def _csv_contour(contour: Contour) -> str:
+    return ":".join(",".join(map(str, point[0])) for point in contour.points)
+
+
 def _csv_row(particle: ParticleTrack) -> Tuple:
     return (particle.width, particle.length, particle.angle,
-            particle.start, particle.end)
+            particle.start, particle.end,
+            particle.snapshot.frame.index, _csv_contour(particle.snapshot.contour))
 
 
 def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
