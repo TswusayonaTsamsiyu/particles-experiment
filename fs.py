@@ -36,6 +36,10 @@ def get_rod_videos() -> List[Path]:
     return _get_videos(ROD_RADIATION_PATH)
 
 
+def get_csvs() -> List[Path]:
+    return [path for path in CSV_PATH.iterdir() if path.suffix.lower() == ".csv"]
+
+
 def _csv_contour(contour: Contour) -> str:
     return ":".join(",".join(map(str, point[0])) for point in contour.points)
 
