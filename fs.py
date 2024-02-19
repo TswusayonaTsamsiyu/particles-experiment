@@ -16,7 +16,8 @@ CSV_PATH = ROOT_PATH / "csv"
 
 _COLUMNS = ("Width", "Length", "Angle",
             "Start Index", "End Index",
-            "Snapshot Index", "Contour")
+            "Snapshot Index", "Contour",
+            "Video")
 
 
 def _is_video(path: Path) -> bool:
@@ -42,7 +43,8 @@ def _csv_contour(contour: Contour) -> str:
 def _csv_row(particle: ParticleTrack) -> Tuple:
     return (particle.width, particle.length, particle.angle,
             particle.start, particle.end,
-            particle.snapshot.frame.index, _csv_contour(particle.snapshot.contour))
+            particle.snapshot.frame.index, _csv_contour(particle.snapshot.contour),
+            particle.snapshot.frame.video)
 
 
 def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
