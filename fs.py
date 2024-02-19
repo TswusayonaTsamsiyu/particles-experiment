@@ -39,4 +39,4 @@ def _csv_row(particle: ParticleEvent) -> Tuple:
 
 
 def save_particles(particles: Iterable[ParticleEvent], path: Path) -> None:
-    pd.DataFrame(map(_csv_row, particles), columns=_COLUMNS).to_csv(path)
+    pd.DataFrame(map(_csv_row, particles), columns=_COLUMNS).to_csv(path, index=False)
