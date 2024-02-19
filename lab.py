@@ -26,7 +26,7 @@ def display(csv: Path) -> None:
     display_particles(read_particles(csv))
 
 
-if __name__ == '__main__':
+def main() -> None:
     parser = ArgumentParser()
     parser.add_argument("action", choices=["detect", "display"])
     parser.add_argument("path", type=Path)
@@ -35,3 +35,7 @@ if __name__ == '__main__':
         detect(args.path)
     elif args.action == "display":
         display(args.path)
+
+
+if __name__ == '__main__':
+    main()
