@@ -11,12 +11,12 @@ class Particle:
     snapshot: Snapshot
 
     @property
-    def start(self) -> int:
-        return self.range[0].index
+    def start(self) -> Ref:
+        return self.range[0]
 
     @property
-    def end(self) -> int:
-        return self.range[1].index
+    def end(self) -> Ref:
+        return self.range[1]
 
     @property
     def length(self) -> float:

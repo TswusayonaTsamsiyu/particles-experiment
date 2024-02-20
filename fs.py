@@ -2,16 +2,13 @@ import json
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from contextlib import ExitStack
 from collections import namedtuple
 from typing import List, Tuple, Iterable
 
-from bettercv.video import Video
+from bettercv.video import Ref
 from bettercv.track import Snapshot
 from bettercv.contours import Contour
 
-from cloudchamber.config import Config
-from cloudchamber.detection import preprocess
 from cloudchamber.particle import Particle
 
 from root import ROOT_PATH
@@ -21,10 +18,9 @@ ROD_RADIATION_PATH = ROOT_PATH / "Rod"
 
 CSV_PATH = ROOT_PATH / "csv"
 
-_COLUMNS = ("Width", "Length", "Angle",
-            "Start", "End",
-            "SnapshotIndex", "Contour",
-            "Video")
+_COLUMNS = ("Width", "Length", "Angle", "Curvature", "Intensity", "Type",
+            "StartIndex", "StartTime", "EndIndex", "EndTime",
+            "SnapshotIndex", "SnapshotTime", "Video", "Contour")
 
 
 def _is_video(path: Path) -> bool:
@@ -55,21 +51,20 @@ def _parse_contour(points: str) -> Contour:
     return Contour(np.array(json.loads(points), dtype=np.int32))
 
 
+def _serialize_ref(ref: Ref) -> Tuple[int, float]:
+    return ref.index, ref.timestamp
+
+
 def _serialize_particle(particle: Particle) -> Tuple:
-    return (particle.width, particle.length, particle.angle,
-            particle.start, particle.end,
-            particle.snapshot.ref.index, _serialize_contour(particle.snapshot.contour),
-            particle.snapshot.ref.video)
+    return (particle.width, particle.length, particle.angle, 0, 0, 0,
+            *_serialize_ref(particle.start), *_serialize_ref(particle.end),
+            *_serialize_ref(particle.snapshot.ref), particle.snapshot.ref.video,
+            _serialize_contour(particle.snapshot.contour))
 
 
-def _parse_particle(row: namedtuple, video: Video) -> Particle:
-    return Particle(
-        (row.Start, row.End),
-        Snapshot(
-            preprocess(video[row.SnapshotIndex], Config),
-            _parse_contour(row.Contour)
-        )
-    )
+def _parse_particle(row: namedtuple) -> Particle:
+    return Particle((Ref(row.Video, row.StartIndex, row.StartTime), Ref(row.Video, row.EndIndex, row.EndTime)),
+                    Snapshot(Ref(row.Video, row.SnapshotIndex, row.SnapshotTime), _parse_contour(row.Contour)))
 
 
 def save_particles(particles: Iterable[Particle], path: Path) -> None:
@@ -78,7 +73,4 @@ def save_particles(particles: Iterable[Particle], path: Path) -> None:
 
 
 def load_particles(path: Path) -> List[Particle]:
-    df = pd.read_csv(path)
-    with ExitStack() as stack:
-        videos = {path: stack.enter_context(Video(path)) for path in df.Video.unique()}
-        return [_parse_particle(row, videos[row.Video]) for row in df.itertuples()]
+    return [_parse_particle(row) for row in pd.read_csv(path).itertuples()]
