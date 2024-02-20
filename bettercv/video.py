@@ -8,20 +8,37 @@ from .types import Image
 
 
 @dataclass
+class Ref:
+    """
+    A reference to a location in a video.
+
+    video (Path): The path to the video file from which the frame is taken
+    index (int): The index of the frame in the video file
+    timestamp (int): The timestamp of the frame in the video file, in seconds
+    """
+    video: Path
+    index: int
+    timestamp: float
+
+    @property
+    def time(self) -> timedelta:
+        """
+        The delta between the beginning of the video and the time when the frame occurs
+        """
+        return timedelta(seconds=self.timestamp)
+
+
+@dataclass
 class Frame:
     """
     A frame in a video.
 
     Attributes:
         image (Image): The actual image in the frame
-        index (int): The index of the frame in the video file
-        timestamp (int): The timestamp of the frame in the video file
-        video (Path): The path to the video file from which the frame is taken
+        ref (Ref): A reference of where the frame is taken from
     """
     image: Image
-    index: int
-    timestamp: timedelta
-    video: Path
+    ref: Ref
 
     def with_image(self, image: Image) -> "Frame":
         """
@@ -34,13 +51,13 @@ class Frame:
         Returns:
             A new frame object with the replaced image
         """
-        return Frame(image, self.index, self.timestamp, self.video)
+        return Frame(image, self.ref)
 
     def __str__(self) -> str:
         return repr(self).strip("<>")
 
     def __repr__(self) -> str:
-        return f"<Frame {self.index} at {self.timestamp}>"
+        return f"<Frame {self.ref.index}, {self.ref.time} from {self.ref.video.name}>"
 
 
 class Video:
@@ -124,12 +141,12 @@ class Video:
         self._raise_if_closed()
         return int(self._cap.get(prop))
 
-    def _current_timestamp(self) -> timedelta:
+    def _current_timestamp(self) -> float:
         """
         Returns:
             The current position of the video capture pointer in terms of time from the start of the video
         """
-        return timedelta(milliseconds=self._get_prop(cv.CAP_PROP_POS_MSEC))
+        return self._get_prop(cv.CAP_PROP_POS_MSEC) / 1000
 
     def _next_frame_index(self) -> int:
         """
@@ -160,7 +177,7 @@ class Video:
         success, frame = self._cap.read()
         if not success:
             raise OSError(f"Could not read frame at index {self._next_frame_index() - 1}")
-        return Frame(frame, self._next_frame_index() - 1, self._current_timestamp(), self.path)
+        return Frame(frame, Ref(self.path, self._next_frame_index() - 1, self._current_timestamp()))
 
     def open(self) -> "Video":
         """
@@ -320,4 +337,4 @@ class Video:
             # This condition is an optimization to avoid the additional IO operation when jump = 1,
             # which is redundant since `self._read_next` automatically advances the capture pointer.
             if jump > 1:
-                self._jump_to_frame(frame.index + jump)
+                self._jump_to_frame(frame.ref.index + jump)

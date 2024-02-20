@@ -38,7 +38,7 @@ def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
 def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], drift_distance: int) -> List[Track]:
     return list(track for track in tracks
                 if (track.end.contour.centroid.distance_to(contour.centroid) < drift_distance)
-                and (index - track.end.frame.index == 1))
+                and (index - track.end.ref.index == 1))
 
 
 def update_tracks(tracks: MutableSequence[Track],
@@ -46,7 +46,7 @@ def update_tracks(tracks: MutableSequence[Track],
                   binary: Frame,
                   config: Config) -> None:
     for contour in contours:
-        close = find_close_tracks(contour, binary.index, tracks, config.drift_distance)
+        close = find_close_tracks(contour, binary.ref.index, tracks, config.drift_distance)
         if len(close) > 1:
             raise Exception("Multiple tracks detected for same contour!")
         if len(close) == 1:
@@ -60,7 +60,7 @@ def update_tracks(tracks: MutableSequence[Track],
 def subtract_bg(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
     for batch in chunked(frames, config.bg_batch_size):
         if config.prints:
-            print(f"Computing BG for {batch[0].index}-{batch[-1].index}")
+            print(f"Computing BG for {batch[0].ref.index}-{batch[-1].ref.index}")
         bg = img.avg(frame.image for frame in batch[::config.bg_jump])
         if config.display:
             Window(bg, "Avg BG").fit_to_screen().show()

@@ -1,18 +1,18 @@
 from datetime import timedelta
 from dataclasses import dataclass
-from typing import List, Iterator
+from typing import List, Iterator, Union
 
-from .video import Frame
+from .video import Frame, Ref
 from .contours import Contour
 
 
 @dataclass
 class Snapshot:
-    frame: Frame
+    ref: Ref
     contour: Contour
 
     def __repr__(self) -> str:
-        return f"<Snapshot at {self.frame.index}, {self.frame.timestamp}>"
+        return f"<Snapshot at {self.ref.index}, {self.ref.time} from {self.ref.video}>"
 
     def __str__(self) -> str:
         return repr(self).strip("<>")
@@ -25,7 +25,7 @@ class Track:
     def __iter__(self) -> Iterator[Snapshot]:
         return iter(self.snapshots)
 
-    def __getitem__(self, index: int) -> Snapshot:
+    def __getitem__(self, index: Union[int, slice]) -> Snapshot:
         return self.snapshots[index]
 
     @property
@@ -38,11 +38,11 @@ class Track:
 
     @property
     def extent(self) -> int:
-        return self.end.frame.index - self.start.frame.index
+        return self.end.ref.index - self.start.ref.index
 
     @property
     def duration(self) -> timedelta:
-        return self.end.frame.timestamp - self.start.frame.timestamp
+        return self.end.ref.time - self.start.ref.time
 
     def record(self, contour: Contour, frame: Frame) -> None:
-        self.snapshots.append(Snapshot(frame, contour))
+        self.snapshots.append(Snapshot(frame.ref, contour))

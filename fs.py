@@ -58,8 +58,8 @@ def _parse_contour(points: str) -> Contour:
 def _serialize_particle(particle: Particle) -> Tuple:
     return (particle.width, particle.length, particle.angle,
             particle.start, particle.end,
-            particle.snapshot.frame.index, _serialize_contour(particle.snapshot.contour),
-            particle.snapshot.frame.video)
+            particle.snapshot.ref.index, _serialize_contour(particle.snapshot.contour),
+            particle.snapshot.ref.video)
 
 
 def _parse_particle(row: namedtuple, video: Video) -> Particle:

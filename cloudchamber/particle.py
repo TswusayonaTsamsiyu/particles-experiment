@@ -1,32 +1,33 @@
 from typing import Tuple
 from dataclasses import dataclass
 
+from bettercv.video import Ref
 from bettercv.track import Track, Snapshot
 
 
 @dataclass
 class Particle:
-    ref: Tuple[int, int]
+    range: Tuple[Ref, Ref]
     snapshot: Snapshot
 
     @property
-    def start(self):
-        return self.ref[0]
+    def start(self) -> int:
+        return self.range[0].index
 
     @property
-    def end(self):
-        return self.ref[1]
+    def end(self) -> int:
+        return self.range[1].index
 
     @property
-    def length(self):
+    def length(self) -> float:
         return self.snapshot.contour.length
 
     @property
-    def width(self):
+    def width(self) -> float:
         return self.snapshot.contour.width
 
     @property
-    def angle(self):
+    def angle(self) -> float:
         return self.snapshot.contour.angle
 
     @property
@@ -44,4 +45,4 @@ class Particle:
     @classmethod
     def from_track(cls, track: Track) -> "Particle":
         best_snapshot = track.snapshots[min(len(track.snapshots) - 1, 4)]
-        return cls((track.start.frame.index, track.end.frame.index), best_snapshot)
+        return cls((track.start.ref, track.end.ref), best_snapshot)
