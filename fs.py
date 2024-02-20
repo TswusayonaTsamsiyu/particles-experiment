@@ -73,7 +73,8 @@ def _parse_particle(row: namedtuple, video: Video) -> ParticleTrack:
 
 
 def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
-    pd.DataFrame(map(_serialize_particle, particles), columns=_COLUMNS).to_csv(path, index=False)
+    data = pd.DataFrame(map(_serialize_particle, particles), columns=_COLUMNS)
+    data.to_csv(path, index=False, mode="a", header=not path.exists())
 
 
 def load_particles(path: Path) -> List[ParticleTrack]:
