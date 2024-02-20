@@ -5,7 +5,7 @@ from bettercv.video import Frame
 from bettercv.contours import Contour, draw_contours
 from bettercv.display import Window, show, left_of
 
-from .particle import ParticleTrack
+from .particle import Particle
 
 ESC = 27
 CLOSE_BTN = -1
@@ -19,7 +19,7 @@ def exit_for(codes: Container[int]) -> Callable[[int], None]:
 handle_key_code = exit_for(EXIT_CODES)
 
 
-def display_particles(events: Iterable[ParticleTrack]) -> None:
+def display_particles(events: Iterable[Particle]) -> None:
     for event in events:
         handle_key_code(Window(
             draw_contours(event.snapshot.frame.image, [event.snapshot.contour]),

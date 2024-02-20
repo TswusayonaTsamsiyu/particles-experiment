@@ -30,11 +30,11 @@ class Track:
 
     @property
     def start(self) -> Snapshot:
-        return self.snapshots[0]
+        return self[0]
 
     @property
     def end(self) -> Snapshot:
-        return self.snapshots[-1]
+        return self[-1]
 
     @property
     def extent(self) -> int:

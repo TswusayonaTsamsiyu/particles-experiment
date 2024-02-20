@@ -12,7 +12,7 @@ from bettercv.contours import Contour
 
 from cloudchamber.config import Config
 from cloudchamber.detection import preprocess
-from cloudchamber.particle import ParticleTrack
+from cloudchamber.particle import Particle
 
 from root import ROOT_PATH
 
@@ -55,15 +55,15 @@ def _parse_contour(points: str) -> Contour:
     return Contour(np.array(json.loads(points), dtype=np.int32))
 
 
-def _serialize_particle(particle: ParticleTrack) -> Tuple:
+def _serialize_particle(particle: Particle) -> Tuple:
     return (particle.width, particle.length, particle.angle,
             particle.start, particle.end,
             particle.snapshot.frame.index, _serialize_contour(particle.snapshot.contour),
             particle.snapshot.frame.video)
 
 
-def _parse_particle(row: namedtuple, video: Video) -> ParticleTrack:
-    return ParticleTrack(
+def _parse_particle(row: namedtuple, video: Video) -> Particle:
+    return Particle(
         (row.Start, row.End),
         Snapshot(
             preprocess(video[row.SnapshotIndex], Config),
@@ -72,12 +72,12 @@ def _parse_particle(row: namedtuple, video: Video) -> ParticleTrack:
     )
 
 
-def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
+def save_particles(particles: Iterable[Particle], path: Path) -> None:
     data = pd.DataFrame(map(_serialize_particle, particles), columns=_COLUMNS)
     data.to_csv(path, index=False, mode="a", header=not path.exists())
 
 
-def load_particles(path: Path) -> List[ParticleTrack]:
+def load_particles(path: Path) -> List[Particle]:
     df = pd.read_csv(path)
     with ExitStack() as stack:
         videos = {path: stack.enter_context(Video(path)) for path in df.Video.unique()}

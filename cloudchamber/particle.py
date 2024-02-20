@@ -5,7 +5,7 @@ from bettercv.track import Track, Snapshot
 
 
 @dataclass
-class ParticleTrack:
+class Particle:
     ref: Tuple[int, int]
     snapshot: Snapshot
 
@@ -42,6 +42,6 @@ class ParticleTrack:
         return NotImplemented
 
     @classmethod
-    def from_track(cls, track: Track) -> "ParticleTrack":
+    def from_track(cls, track: Track) -> "Particle":
         best_snapshot = track.snapshots[min(len(track.snapshots) - 1, 4)]
         return cls((track.start.frame.index, track.end.frame.index), best_snapshot)
