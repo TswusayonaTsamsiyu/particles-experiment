@@ -76,7 +76,7 @@ def save_particles(particles: Iterable[ParticleTrack], path: Path) -> None:
     pd.DataFrame(map(_serialize_particle, particles), columns=_COLUMNS).to_csv(path, index=False)
 
 
-def read_particles(path: Path) -> List[ParticleTrack]:
+def load_particles(path: Path) -> List[ParticleTrack]:
     df = pd.read_csv(path)
     with ExitStack() as stack:
         videos = {path: stack.enter_context(Video(path)) for path in df.Video.unique()}

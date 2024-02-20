@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from cloudchamber.detection import analyze_video
 from cloudchamber.debugging import display_particles
 
-from fs import save_particles, read_particles, CSV_PATH
+from fs import save_particles, load_particles, CSV_PATH
 
 START_TIME = 120
 NUM_SECONDS = 20
@@ -19,7 +19,7 @@ def detect(path: Path) -> None:
 
 
 def display(csv: Path) -> None:
-    display_particles(read_particles(csv))
+    display_particles(load_particles(csv))
 
 
 def main() -> None:
