@@ -1,9 +1,9 @@
 import cv2 as cv
 from random import shuffle
 from typing import Sequence
+from numpy import ndarray, vstack
 from dataclasses import dataclass
 from functools import cached_property
-from numpy import ndarray, linalg, vstack
 
 from .types import Position, Image
 from .image import bgr, is_grayscale
@@ -69,7 +69,7 @@ class Contour:
         return cv.fitLine(self.points, dist_type, 0, reps, aeps)
 
     def is_close_to(self, other: "Contour", distance: float, jump: int = 10) -> bool:
-        return any(linalg.norm(p1 - p2) < distance
+        return any(cv.norm(p1 - p2) < distance
                    for p1 in self.points[::jump]
                    for p2 in other.points[::jump])
 
