@@ -16,19 +16,19 @@ class Contour:
 
     @property
     def axes(self) -> Sequence[float]:
-        return sorted(self.min_area_rect[1])
+        return self.min_area_rect[1]
 
     @property
     def width(self) -> float:
-        return self.axes[0]
+        return min(self.axes)
 
     @property
     def length(self) -> float:
-        return self.axes[1]
+        return max(self.axes)
 
     @property
     def angle(self):
-        return self.min_area_rect[2]
+        return self.min_area_rect[2] + (90 if self.axes[0] < self.axes[1] else 0)
 
     @cached_property
     def area(self) -> float:
