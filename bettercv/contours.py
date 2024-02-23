@@ -102,7 +102,8 @@ def find_contours(image: Image, external_only: bool = False) -> Sequence[Contour
 def draw_contours(image: Image,
                   contours: Sequence[Contour],
                   color: Color = None,
-                  thickness: int = 3) -> Image:
+                  thickness: int = 3,
+                  fill: bool = False) -> Image:
     canvas = bgr(image.copy()) if is_grayscale(image) else image.copy()
     if color:
         colors = [color] * len(contours)
@@ -110,5 +111,5 @@ def draw_contours(image: Image,
         colors = list(map(max_sv, max_spaced_hues(len(contours))))
         shuffle(colors)
     for index, contour in enumerate(contours):
-        cv.drawContours(canvas, [contour.points], 0, colors[index], thickness)
+        cv.drawContours(canvas, [contour.points], 0, colors[index], thickness if not fill else -1)
     return canvas
