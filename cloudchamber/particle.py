@@ -1,8 +1,12 @@
 from typing import Tuple
 from dataclasses import dataclass
 
-from bettercv.video import Ref
+from bettercv.image import mean
+from bettercv.video import Ref, Video
 from bettercv.track import Track, Snapshot
+
+from .config import Config
+from .processing import preprocess
 
 
 @dataclass
@@ -36,7 +40,9 @@ class Particle:
 
     @property
     def intensity(self):
-        return NotImplemented
+        with Video(self.snapshot.ref.video) as video:
+            frame = preprocess(video[self.snapshot.ref.index], Config)
+        return mean(frame.image, self.snapshot.contour.create_mask(frame.image.shape))[0]
 
     @property
     def type(self):

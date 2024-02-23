@@ -1,8 +1,9 @@
 import cv2 as cv
+import numpy as np
 from random import shuffle
-from typing import Sequence
 from numpy import ndarray, vstack
 from dataclasses import dataclass
+from typing import Sequence, Tuple
 from functools import cached_property
 
 from .types import Position, Image
@@ -72,6 +73,11 @@ class Contour:
         return any(cv.norm(p1 - p2) < distance
                    for p1 in self.points[::jump]
                    for p2 in other.points[::jump])
+
+    def create_mask(self, shape: Tuple[int, ...]) -> Image:
+        mask = np.zeros(shape, np.uint8)
+        cv.drawContours(mask, [self.points], 0, (255, 255, 255), -1)
+        return mask
 
 
 def join_contours(contours: Sequence[Contour]) -> Contour:

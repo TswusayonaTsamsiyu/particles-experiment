@@ -56,7 +56,7 @@ def _serialize_ref(ref: Ref) -> Tuple[int, float]:
 
 
 def _serialize_particle(particle: Particle) -> Tuple:
-    return (particle.width, particle.length, particle.angle, 0, 0, 0,
+    return (particle.width, particle.length, particle.angle, 0, particle.intensity, 0,
             *_serialize_ref(particle.start), *_serialize_ref(particle.end),
             *_serialize_ref(particle.snapshot.ref), particle.snapshot.ref.video,
             _serialize_contour(particle.snapshot.contour))

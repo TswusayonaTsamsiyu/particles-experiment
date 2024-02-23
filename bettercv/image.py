@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from functools import reduce
 from more_itertools import first
-from typing import Tuple, Iterable
+from typing import Tuple, Iterable, Sequence
 
 from .types import Image, Size
 
@@ -51,6 +51,10 @@ def adjust_brightness_contrast(image: Image) -> Image:
 
 
 abc = adjust_brightness_contrast
+
+
+def mean(image: Image, mask: Image = None) -> Sequence[float]:
+    return cv.mean(image, mask)
 
 
 def avg(images: Iterable[Image]) -> Image:
