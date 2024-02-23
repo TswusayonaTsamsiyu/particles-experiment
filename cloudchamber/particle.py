@@ -50,5 +50,10 @@ class Particle:
 
     @classmethod
     def from_track(cls, track: Track) -> "Particle":
-        best_snapshot = track.snapshots[min(len(track.snapshots) - 1, 4)]
+        best_snapshot = max(track.snapshots, key=_snapshot_maximizer)
+        # best_snapshot = track.snapshots[min(len(track.snapshots) - 1, 4)]
         return cls((track.start.ref, track.end.ref), best_snapshot)
+
+
+def _snapshot_maximizer(snapshot: Snapshot) -> float:
+    return snapshot.contour.length / snapshot.contour.width
