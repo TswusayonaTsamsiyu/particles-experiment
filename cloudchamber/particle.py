@@ -35,17 +35,17 @@ class Particle:
         return self.snapshot.contour.angle
 
     @property
-    def curvature(self):
-        return NotImplemented
+    def curvature(self) -> float:
+        return abs(self.snapshot.contour.fit(2)[0])
 
     @property
-    def intensity(self):
+    def intensity(self) -> float:
         with Video(self.snapshot.ref.video) as video:
             frame = preprocess(video[self.snapshot.ref.index], Config)
         return mean(frame.image, self.snapshot.contour.create_mask(frame.image.shape))[0]
 
     @property
-    def type(self):
+    def type(self) -> str:
         return NotImplemented
 
     @classmethod

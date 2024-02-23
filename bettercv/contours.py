@@ -66,8 +66,8 @@ class Contour:
     def min_area_rect(self) -> cv.typing.RotatedRect:
         return cv.minAreaRect(self.points)
 
-    def fit_line(self, dist_type: int = cv.DIST_L2, reps: float = 0.01, aeps: float = 0.01):
-        return cv.fitLine(self.points, dist_type, 0, reps, aeps)
+    def fit(self, deg: int) -> Sequence[float]:
+        return np.polyfit(self.points[:, 0, 0], self.points[:, 0, 1], deg)
 
     def is_close_to(self, other: "Contour", distance: float, jump: int = 10) -> bool:
         return any(cv.norm(p1 - p2) < distance
