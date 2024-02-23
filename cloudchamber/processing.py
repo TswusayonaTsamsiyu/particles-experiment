@@ -12,7 +12,7 @@ def preprocess(frame: Frame, config: Config) -> Frame:
     return frame.with_image(img.grayscale(img.scale(frame.image, config.scale_factor)))
 
 
-def remove_noise(frame: Frame, config: Config) -> Frame:
+def smooth(frame: Frame, config: Config) -> Frame:
     return frame.with_image(img.blur(frame.image, (config.blur_size, config.blur_size)))
 
 
@@ -25,6 +25,22 @@ def subtract_bg(frames: Iterable[Frame], config: Config) -> Generator[Frame, Non
             Window(bg, "Avg BG").fit_to_screen().show()
         for frame in batch:
             yield frame.with_image(img.subtract(frame.image, bg))
+
+
+def subtract_bg_2(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
+    had_tracks = False
+    bg = next(iter(frames)).image
+    for frame in frames:
+        thresh, binary = img.threshold_otsu(img.subtract(frame.image, bg))
+        if has_tracks(thresh, config.min_threshold):
+            had_tracks = True
+            yield frame.with_image(binary)
+        else:
+            if had_tracks:
+                if config.prints:
+                    print(f"New BG is {frame}")
+                bg = frame.image
+            had_tracks = False
 
 
 def has_tracks(threshold: float, min_thresh: float) -> bool:

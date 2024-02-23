@@ -7,7 +7,7 @@ from bettercv.contours import Contour, find_contours, join_close_contours
 
 from .config import Config
 from .particle import Particle
-from .processing import preprocess, remove_noise, subtract_bg, binaries_with_tracks
+from .processing import preprocess, smooth, subtract_bg, binaries_with_tracks, subtract_bg_2
 
 
 def find_prominent_contours(binary: Frame, min_size: int) -> Sequence[Contour]:
@@ -47,8 +47,10 @@ def update_tracks(tracks: MutableSequence[Track],
 def detect_tracks(frames: Iterable[Frame], **config) -> List[Particle]:
     tracks: List[Track] = []
     config = Config.merge(config)
-    for binary in binaries_with_tracks(subtract_bg(
-            (remove_noise(preprocess(frame, config), config) for frame in frames), config), config):
+    frames = (smooth(preprocess(frame, config), config) for frame in frames)
+    binaries = (binaries_with_tracks(subtract_bg(frames, config), config)
+                if config.bg_method == "avg" else subtract_bg_2(frames, config))
+    for binary in binaries:
         contours = retain_track_like(
             join_close_contours(find_prominent_contours(binary, config.min_contour_size), config.dist_close))
         update_tracks(tracks, contours, binary, config)

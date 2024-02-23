@@ -15,6 +15,7 @@ class Config:
     min_track_length: int = 5
     min_threshold: int = 1
     # BG computation
+    bg_method: str = "avg"  # or "replace"
     bg_jump: int = 5
     bg_batch_size: int = 200
     # Resizing
