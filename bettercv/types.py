@@ -17,6 +17,18 @@ class Position(namedtuple("PositionBase", "x y")):
         """
         return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** .5
 
+    def is_right_of(self, other: "Position") -> bool:
+        """
+        Checks whether the point is to the right of another point.
+        """
+        return self.x > other.x
+
+    def is_higher_than(self, other: "Position") -> bool:
+        """
+        Checks if the point is higher than another point
+        """
+        return self.y < other.y
+
 
 class Size(namedtuple("SizeBase", "width height")):
     """
