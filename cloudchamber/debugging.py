@@ -1,10 +1,11 @@
 from contextlib import ExitStack
 from typing import Iterable, Container, Callable, Sequence
 
+from bettercv.image import abc
 from bettercv.types import Image
 from bettercv.video import Video, Frame
-from bettercv.contours import Contour, draw_contours
 from bettercv.display import Window, show, left_of
+from bettercv.contours import Contour, draw_contours
 
 from .config import Config
 from .particle import Particle
@@ -30,7 +31,7 @@ def display_particles(particles: Iterable[Particle], **config) -> None:
         for particle in particles:
             frame = preprocess(videos[particle.snapshot.ref.video][particle.snapshot.ref.index], config)
             handle_key_code(Window(
-                draw_contours(frame.image, [particle.snapshot.contour]),
+                draw_contours(abc(frame.image), [particle.snapshot.contour]),
                 str(particle.snapshot)
             ).fit_to_screen().show())
 
