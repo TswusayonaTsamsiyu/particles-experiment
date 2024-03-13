@@ -75,9 +75,7 @@ class Contour:
                    for p2 in other.points[::jump])
 
     def create_mask(self, shape: Tuple[int, ...]) -> Image:
-        mask = np.zeros(shape, np.uint8)
-        cv.drawContours(mask, [self.points], 0, (255, 255, 255), -1)
-        return mask
+        return draw_contours(np.zeros(shape, np.uint8), [self], (255, 255, 255), fill=True)
 
 
 def join_contours(contours: Sequence[Contour]) -> Contour:
