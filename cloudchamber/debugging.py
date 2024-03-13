@@ -9,7 +9,7 @@ from bettercv.contours import Contour, draw_contours
 
 from .config import Config
 from .particle import Particle
-from .detection import preprocess
+from .processing import preprocess
 
 ESC = 27
 CLOSE_BTN = -1
