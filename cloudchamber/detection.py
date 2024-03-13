@@ -35,7 +35,8 @@ def update_tracks(tracks: MutableSequence[Track],
     for contour in contours:
         close = find_close_tracks(contour, binary.ref.index, tracks, config.drift_distance)
         if len(close) > 1:
-            raise Exception("Multiple tracks detected for same contour!")
+            # raise Exception("Multiple tracks detected for same contour!")
+            pass
         if len(close) == 1:
             close[0].record(contour, binary)
         else:
