@@ -44,7 +44,7 @@ def subtract_bg_2(frames: Iterable[Frame], config: Config) -> Generator[Frame, N
 
 
 def has_tracks(threshold: float, min_thresh: float) -> bool:
-    return threshold > min_thresh
+    return threshold >= min_thresh
 
 
 def binaries_with_tracks(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
