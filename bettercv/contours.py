@@ -7,7 +7,7 @@ from typing import Sequence, Tuple
 from functools import cached_property
 
 from .types import Position, Image
-from .image import bgr, is_grayscale
+from .image import bgr, is_grayscale, grayscale
 from .colors import Color, max_sv, max_spaced_hues
 
 
@@ -75,7 +75,7 @@ class Contour:
                    for p2 in other.points[::jump])
 
     def create_mask(self, shape: Tuple[int, ...]) -> Image:
-        return draw_contours(np.zeros(shape, np.uint8), [self], (255, 255, 255), fill=True)
+        return grayscale(draw_contours(np.zeros(shape, np.uint8), [self], (255, 255, 255), fill=True))
 
 
 def join_contours(contours: Sequence[Contour]) -> Contour:
