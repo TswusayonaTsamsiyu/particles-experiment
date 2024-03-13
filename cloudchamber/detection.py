@@ -23,8 +23,9 @@ def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
 
 
 def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], drift_distance: int) -> List[Track]:
+def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], track_distance: int) -> List[Track]:
     return list(track for track in tracks
-                if (track.end.contour.centroid.distance_to(contour.centroid) < drift_distance)
+                if (track.end.contour.centroid.distance_to(contour.centroid) < track_distance)
                 and (index - track.end.ref.index == 1))
 
 
@@ -33,7 +34,7 @@ def update_tracks(tracks: MutableSequence[Track],
                   binary: Frame,
                   config: Config) -> None:
     for contour in contours:
-        close = find_close_tracks(contour, binary.ref.index, tracks, config.drift_distance)
+        close = find_close_tracks(contour, binary.ref.index, tracks, config.track_distance)
         if len(close) > 1:
             # raise Exception("Multiple tracks detected for same contour!")
             pass
