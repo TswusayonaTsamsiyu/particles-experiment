@@ -22,7 +22,6 @@ def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
             and (contour.width < 100))
 
 
-def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], drift_distance: int) -> List[Track]:
 def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], track_distance: int) -> List[Track]:
     return list(track for track in tracks
                 if (track.end.contour.centroid.distance_to(contour.centroid) < track_distance)
