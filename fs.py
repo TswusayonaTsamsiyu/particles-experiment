@@ -65,7 +65,8 @@ def _serialize_particle(particle: Particle) -> Tuple:
 
 def _parse_particle(row: namedtuple) -> Particle:
     return Particle((Ref(row.Video, row.StartIndex, row.StartTime), Ref(row.Video, row.EndIndex, row.EndTime)),
-                    Snapshot(Ref(row.Video, row.SnapshotIndex, row.SnapshotTime), _parse_contour(row.Contour)))
+                    Snapshot(Ref(row.Video, row.SnapshotIndex, row.SnapshotTime), row.SnapshotIndex - row.StartIndex,
+                             _parse_contour(row.Contour)))
 
 
 def save_particles(particles: Iterable[Particle], path: Path) -> None:
