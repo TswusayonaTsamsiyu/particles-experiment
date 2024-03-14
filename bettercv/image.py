@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from functools import reduce
 from more_itertools import first
-from typing import Tuple, Iterable, Sequence
+from typing import Tuple, Iterable, Sequence, Generator
 
 from .types import Image, Size
 
@@ -78,9 +78,10 @@ def subtract(image1: Image, image2: Image) -> Image:
     return cv.subtract(image1, image2)
 
 
-def subtract_bg(image: Image, thresh: int) -> Image:
-    # Doesn't work...
-    return cv.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(image)
+def subtract_bg(images: Iterable[Image], **kwargs) -> Generator[Image, None, None]:
+    subtractor = cv.createBackgroundSubtractorMOG2(**kwargs)
+    for image in images:
+        yield subtractor.apply(image)
 
 
 def crop(image: Image,

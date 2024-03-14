@@ -6,10 +6,12 @@ from bettercv.track import Track
 from bettercv.video import Video, Frame
 from bettercv.contours import Contour, find_contours, join_close_contours
 
+import cloudchamber.debugging as dbg
+
 from .config import Config
 from .particle import Particle
-from .debugging import display_frame, display_track, display_contours
-from .processing import preprocess, smooth, subtract_bg, binaries_with_tracks, binaries_with_tracks_2, subtract_bg_2, print_mean, has_tracks_2
+from .processing import preprocess, smooth
+from .bg_subtraction import subtract_bg, subtract_bg_avg, binaries_with_tracks_2
 
 
 def find_prominent_contours(binary: Frame, min_size: int) -> Sequence[Contour]:
@@ -18,10 +20,10 @@ def find_prominent_contours(binary: Frame, min_size: int) -> Sequence[Contour]:
                  if contour.area > min_size)
 
 
-def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
+def retain_track_like(contours: Iterable[Contour], config: Config) -> Iterable[Contour]:
     return (contour for contour in contours
-            if (contour.length / contour.width > 3)
-            and (contour.width < 100))
+            if (contour.length / contour.width > config.min_aspect_ratio)
+            and (contour.width < config.max_contour_width))
 
 
 def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], track_distance: int) -> List[Track]:
@@ -90,18 +92,24 @@ def filter_tracks(tracks: List[Track], config: Config) -> List[Track]:
 def detect_tracks(frames: Iterable[Frame], **config) -> List[Particle]:
     tracks: List[Track] = []
     config = Config.merge(config)
-    frames = (smooth(preprocess(frame, config), config) for frame in frames)
-    binaries = (binaries_with_tracks_2(subtract_bg(frames, config), config)
-                if config.bg_method == "avg" else subtract_bg_2(frames, config))
-    for binary in binaries:
+    # frames = (smooth(preprocess(frame, config), config) for frame in frames)
+    # frames = binaries_with_tracks_2(subtract_bg_avg(frames, config), config)
+    frames = subtract_bg((smooth(preprocess(frame, config), config) for frame in frames), config)
+    for binary in frames:
         contours = list(retain_track_like(
-            join_close_contours(find_prominent_contours(binary, config.min_contour_size), config.dist_close)))
+            join_close_contours(
+                find_prominent_contours(binary, config.min_contour_size),
+                config.dist_close
+            ), config
+        ))
         if contours:
-            display_contours(binary, contours)
+            dbg.display_contours(binary, contours)
         update_tracks(tracks, contours, binary, config)
-    # all_particles = list(map(Particle.from_track, tracks))
     # display_particles(all_particles)
-    return list(map(Particle.from_track, filter_tracks(tracks, config)))
+    return list(map(
+        Particle.from_track,
+        filter_tracks(tracks, config)
+    ))
     # maybe check growth rate
     # and track.start.contour.length < 50]
 
@@ -110,5 +118,5 @@ def analyze_video(path: Path, start: int = 0, stop: int = None, **config) -> Lis
     with Video(path) as video:
         return detect_tracks(video.iter_frames(
             start=video.index_at(start),
-            stop=video.index_at(stop)
+            stop=video.index_at(stop) if stop else None
         ), **config)
