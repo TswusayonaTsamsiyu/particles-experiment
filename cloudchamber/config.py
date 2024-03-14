@@ -7,7 +7,7 @@ class Config:
     # Preprocessing
     blur_size: int = 15
     scale_factor: float = 0.6
-    crop_box: Tuple[int, int, int, int] = (50, 50, 0, 0)
+    crop_box: Tuple[int, int, int, int] = (35, 20, 0, 0)
     # Tracking
     track_distance: int = 30
     # Joining
