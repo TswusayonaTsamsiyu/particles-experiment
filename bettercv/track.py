@@ -9,6 +9,7 @@ from .contours import Contour
 @dataclass
 class Snapshot:
     ref: Ref
+    index: int
     contour: Contour
 
     def __repr__(self) -> str:
@@ -45,4 +46,4 @@ class Track:
         return self.end.ref.time - self.start.ref.time
 
     def record(self, contour: Contour, frame: Frame) -> None:
-        self.snapshots.append(Snapshot(frame.ref, contour))
+        self.snapshots.append(Snapshot(frame.ref, len(self.snapshots), contour))
