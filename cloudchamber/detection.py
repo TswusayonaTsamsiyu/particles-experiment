@@ -55,9 +55,10 @@ def detect_tracks(frames: Iterable[Frame], **config) -> List[Particle]:
         contours = retain_track_like(
             join_close_contours(find_prominent_contours(binary, config.min_contour_size), config.dist_close))
         update_tracks(tracks, contours, binary, config)
-    return [Particle.from_track(track)
-            for track in tracks
-            if track.extent > config.min_track_length]
+    return list(map(
+        Particle.from_track,
+        [track for track in tracks if track.extent > config.min_track_length]
+    ))
 
 
 def analyze_video(path: Path, start: int = 0, stop: int = None, **config) -> List[Particle]:
