@@ -30,7 +30,7 @@ def _format_filename(label: str) -> str:
 def _plot_hist(particles: Sequence[Particle], attr: Callable, label: str,
                save_path: str = None, show: bool = True) -> None:
     fig = plt.figure()
-    plt.hist([attr(particle) for particle in particles])
+    plt.hist([attr(particle) for particle in particles], bins="auto")
     plt.xlabel(label)
     plt.ylabel("No. Particles")
     title = _format_title(label)
