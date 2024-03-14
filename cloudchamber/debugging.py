@@ -51,11 +51,6 @@ def display_contours(frame: Frame, contours: Sequence[Contour]) -> Frame:
     return frame
 
 
-def display_contours(frame: Frame, contours: Sequence[Contour]) -> Frame:
-    display_frame(frame.with_image(draw_contours(frame.image, contours)))
-    return frame
-
-
 def display_track(track: Track, **config) -> Track:
     config = Config.merge(config)
     with Video(track[0].ref.video) as video:
