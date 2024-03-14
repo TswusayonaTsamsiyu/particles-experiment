@@ -42,6 +42,20 @@ def _plot_hist(particles: Sequence[Particle], attr: Callable, label: str,
         fig.show()
 
 
+def plot_hist_2d(particles: Sequence[Particle]) -> None:
+    fig = plt.figure()
+    plt.hist2d(*zip(*((particle.length, particle.width) for particle in particles)), bins=40)
+    # plt.xlabel(label)
+    # plt.ylabel("No. Particles")
+    # title = _format_title(label)
+    # plt.title(title)
+    # if save_path:
+    #     print(f"Saving {title}")
+    #     fig.savefig(save_path)
+    # if show:
+    fig.show()
+
+
 def plot_histograms(particles: Sequence[Particle],
                     save_dir: Path = None, show: bool = True) -> None:
     for hist in _HISTOGRAMS:
@@ -50,4 +64,5 @@ def plot_histograms(particles: Sequence[Particle],
 
 
 if __name__ == '__main__':
-    plot_histograms(load_particles(CSV_PATH / "20240109_122031.csv"))
+    # plot_histograms(load_particles(CSV_PATH / "20240109_122031-full.csv"))
+    plot_hist_2d(load_particles(CSV_PATH / "20240109_122031-full.csv"))
