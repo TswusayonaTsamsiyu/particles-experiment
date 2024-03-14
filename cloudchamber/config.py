@@ -9,7 +9,7 @@ class Config:
     scale_factor: float = 0.6
     crop_box: Tuple[int, int, int, int] = (35, 20, 0, 0)
     # BG computation
-    bg_method: str = "avg"  # or "replace"
+    bg_method: str = "mog2"  # "mog2"/"avg"/"replace"
     bg_jump: int = 5
     bg_batch_size: int = 200
     # Thresholding
