@@ -70,7 +70,7 @@ def _parse_particle(row: namedtuple) -> Particle:
 
 def save_particles(particles: Iterable[Particle], path: Path) -> None:
     data = pd.DataFrame(map(_serialize_particle, particles), columns=_COLUMNS)
-    data.to_csv(path, index=False, mode="a", header=not path.exists())
+    data.to_csv(path, index=False)
 
 
 def load_particles(path: Path) -> List[Particle]:
