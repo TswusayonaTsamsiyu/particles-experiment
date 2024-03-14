@@ -13,7 +13,7 @@ class Config:
     bg_jump: int = 5
     bg_batch_size: int = 200
     # Thresholding
-    min_threshold: int = 3
+    min_threshold: int = 1
     # Contour Filtering
     min_contour_size: int = 500
     # Contour Joining
