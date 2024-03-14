@@ -83,8 +83,12 @@ def subtract_bg(image: Image, thresh: int) -> Image:
     return cv.createBackgroundSubtractorMOG2(varThreshold=thresh, detectShadows=False).apply(image)
 
 
-def crop(image: Image, top: int, bottom: int) -> Image:
-    return image[top:-bottom]
+def crop(image: Image,
+         top: int = 0,
+         bottom: int = 0,
+         left: int = 0,
+         right: int = 0) -> Image:
+    return image[top:-bottom, left:-right]
 
 
 def scale(image: Image, factor: float) -> Image:
