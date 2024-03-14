@@ -66,6 +66,10 @@ class Contour:
     def min_area_rect(self) -> cv.typing.RotatedRect:
         return cv.minAreaRect(self.points)
 
+    @cached_property
+    def bounding_rect(self) -> Sequence[int]:
+        return cv.boundingRect(self.points)
+
     def fit(self, deg: int) -> Sequence[float]:
         return np.polyfit(self.points[:, 0, 0], self.points[:, 0, 1], deg)
 
