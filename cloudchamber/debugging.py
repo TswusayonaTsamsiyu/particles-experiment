@@ -2,6 +2,7 @@ from contextlib import ExitStack
 from typing import Iterable, Container, Callable, Sequence
 
 from bettercv.image import abc
+from bettercv.track import Track
 from bettercv.types import Image
 from bettercv.video import Video, Frame
 from bettercv.display import Window, show, left_of
@@ -39,3 +40,12 @@ def display_particles(particles: Iterable[Particle], **config) -> None:
 def display_frame(frame: Frame) -> Frame:
     handle_key_code(Window(frame.image, title=str(frame)).fit_to_screen().show())
     return frame
+
+
+def display_track(track: Track, **config) -> Track:
+    config = Config.merge(config)
+    with Video(track[0].ref.video) as video:
+        for snapshot in track:
+            image = draw_contours(abc(preprocess(video[snapshot.ref.index], config).image), [snapshot.contour])
+            handle_key_code(Window(image, title=f"#{snapshot.index}: {snapshot}").show())
+    return track
