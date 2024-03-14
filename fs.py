@@ -17,6 +17,7 @@ BG_RADIATION_PATH = ROOT_PATH / "Background"
 ROD_RADIATION_PATH = ROOT_PATH / "Rod"
 
 CSV_PATH = ROOT_PATH / "csv"
+GRAPH_PATH = ROOT_PATH / "graphs"
 
 _COLUMNS = ("Width", "Length", "Angle", "Curvature", "Intensity", "Type",
             "StartIndex", "StartTime", "EndIndex", "EndTime",
