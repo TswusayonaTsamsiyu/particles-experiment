@@ -6,7 +6,17 @@ from bettercv.video import Frame
 from bettercv.display import Window
 
 from .config import Config
-from .processing import has_tracks, binaries_with_tracks
+
+
+def has_tracks(threshold: float, min_thresh: float) -> bool:
+    return threshold >= min_thresh
+
+
+def binaries_with_tracks(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
+    for frame in frames:
+        thresh, binary = img.threshold_otsu(frame.image)
+        if has_tracks(thresh, config.min_threshold):
+            yield frame.with_image(binary)
 
 
 def subtract_bg_avg(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
