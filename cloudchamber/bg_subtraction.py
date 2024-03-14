@@ -1,3 +1,4 @@
+from itertools import tee
 from more_itertools import chunked
 from typing import Iterable, Generator
 
@@ -47,8 +48,9 @@ def subtract_bg_replace(frames: Iterable[Frame], config: Config) -> Generator[Fr
 
 
 def subtract_bg_mog2(frames: Iterable[Frame]) -> Generator[Frame, None, None]:
-    fg = img.subtract_bg((frame.image for frame in frames), detectShadows=False)
-    return (frame.with_image(next(fg)) for frame in frames)
+    frames, fg_masks = tee(frames)
+    fg_masks = img.subtract_bg((frame.image for frame in fg_masks), detectShadows=False)
+    return (frame.with_image(fg) for frame, fg in zip(frames, fg_masks))
 
 
 def subtract_bg(frames: Iterable[Frame], config: Config) -> Generator[Frame, None, None]:
