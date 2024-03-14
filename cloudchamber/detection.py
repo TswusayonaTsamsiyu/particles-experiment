@@ -5,9 +5,10 @@ from bettercv.track import Track
 from bettercv.video import Video, Frame
 from bettercv.contours import Contour, find_contours, join_close_contours
 
+import cloudchamber.debugging as dbg
+
 from .config import Config
 from .particle import Particle
-from .debugging import display_frame
 from .bg_subtraction import subtract_bg
 from .processing import preprocess, smooth
 

@@ -24,6 +24,10 @@ def exit_for(codes: Container[int]) -> Callable[[int], None]:
 handle_key_code = exit_for(EXIT_CODES)
 
 
+def display_image(image: Image, title: str) -> None:
+    handle_key_code(Window(image, title).fit_to_screen().show())
+
+
 def display_particles(particles: Iterable[Particle], **config) -> None:
     config = Config.merge(config)
     with ExitStack() as stack:
@@ -31,14 +35,19 @@ def display_particles(particles: Iterable[Particle], **config) -> None:
                   for path in {particle.snapshot.ref.video for particle in particles}}
         for particle in particles:
             frame = preprocess(videos[particle.snapshot.ref.video][particle.snapshot.ref.index], config)
-            handle_key_code(Window(
+            display_image(
                 draw_contours(abc(frame.image), [particle.snapshot.contour]),
                 str(particle.snapshot)
-            ).fit_to_screen().show())
+            )
 
 
 def display_frame(frame: Frame) -> Frame:
-    handle_key_code(Window(frame.image, title=str(frame)).fit_to_screen().show())
+    display_image(frame.image, str(frame))
+    return frame
+
+
+def display_contours(frame: Frame, contours: Sequence[Contour]) -> Frame:
+    display_image(draw_contours(frame.image, contours), str(frame))
     return frame
 
 
