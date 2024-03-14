@@ -8,19 +8,21 @@ class Config:
     blur_size: int = 15
     scale_factor: float = 0.6
     crop_box: Tuple[int, int, int, int] = (35, 20, 0, 0)
-    # Tracking
-    track_distance: int = 30
-    # Joining
-    dist_close: int = 30
-    # Filtering
-    min_contour_size: int = 500
-    min_track_length: int = 10
-    min_threshold: int = 3
     # BG computation
     bg_method: str = "avg"  # or "replace"
     bg_jump: int = 5
     bg_batch_size: int = 200
-    # Debug
+    # Thresholding
+    min_threshold: int = 3
+    # Contour Filtering
+    min_contour_size: int = 500
+    # Contour Joining
+    dist_close: int = 30
+    # Contour Tracking
+    track_distance: int = 30
+    # Track Filtering
+    min_track_length: int = 10
+    # Debugging
     prints: bool = True
     display: bool = False
 
