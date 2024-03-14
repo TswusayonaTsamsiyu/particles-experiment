@@ -16,6 +16,8 @@ class Config:
     min_threshold: int = 1
     # Contour Filtering
     min_contour_size: int = 500
+    min_aspect_ratio: float = 3
+    max_contour_width: int = 100
     # Contour Joining
     dist_close: int = 30
     # Contour Tracking

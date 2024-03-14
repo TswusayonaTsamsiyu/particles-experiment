@@ -19,10 +19,10 @@ def find_prominent_contours(binary: Frame, min_size: int) -> Sequence[Contour]:
                  if contour.area > min_size)
 
 
-def retain_track_like(contours: Iterable[Contour]) -> Iterable[Contour]:
+def retain_track_like(contours: Iterable[Contour], config: Config) -> Iterable[Contour]:
     return (contour for contour in contours
-            if (contour.length / contour.width > 3)
-            and (contour.width < 100))
+            if (contour.length / contour.width > config.min_aspect_ratio)
+            and (contour.width < config.max_contour_width))
 
 
 def find_close_tracks(contour: Contour, index: int, tracks: Iterable[Track], track_distance: int) -> List[Track]:
@@ -54,7 +54,11 @@ def detect_tracks(frames: Iterable[Frame], **config) -> List[Particle]:
     frames = subtract_bg((smooth(preprocess(frame, config), config) for frame in frames), config)
     for binary in frames:
         contours = retain_track_like(
-            join_close_contours(find_prominent_contours(binary, config.min_contour_size), config.dist_close))
+            join_close_contours(
+                find_prominent_contours(binary, config.min_contour_size),
+                config.dist_close
+            ), config
+        )
         update_tracks(tracks, contours, binary, config)
     return list(map(
         Particle.from_track,
