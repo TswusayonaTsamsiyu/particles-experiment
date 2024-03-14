@@ -36,10 +36,6 @@ def display_particles(particles: Iterable[Particle], **config) -> None:
             ).fit_to_screen().show())
 
 
-def display_frame(frame: Frame, binary: Image, contours: Sequence[Contour]) -> None:
-    right_window = Window(draw_contours(binary, contours),
-                          title=f"Binary {frame} with contours").fit_to_screen()
-    left_window = Window(frame.image,
-                         title=f"Prepared {frame}",
-                         position=left_of(right_window)).fit_to_screen()
-    handle_key_code(show((right_window, left_window)))
+def display_frame(frame: Frame) -> Frame:
+    handle_key_code(Window(frame.image, title=str(frame)).fit_to_screen().show())
+    return frame
