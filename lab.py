@@ -9,7 +9,7 @@ from analysis import plot_histograms
 from fs import save_particles, load_particles, CSV_PATH, GRAPH_PATH
 
 START_TIME = 120
-NUM_SECONDS = 60 * 40
+NUM_SECONDS = 60
 
 
 def detect(path: Path) -> None:

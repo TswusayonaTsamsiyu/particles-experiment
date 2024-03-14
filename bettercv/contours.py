@@ -86,6 +86,13 @@ def join_contours(contours: Sequence[Contour]) -> Contour:
     return Contour(vstack([contour.points for contour in contours])).convex_hull()
 
 
+# def join_contours(contours: Sequence[Contour]) -> Contour:
+#     sizes = (contour.bounding_rect[2:] for contour in contours)
+#     widths, heights = zip(*sizes)
+#     shape = (max(heights), max(widths))
+#     con
+
+
 def join_close_contours(contours: Sequence[Contour], closeness: int) -> Sequence[Contour]:
     groups = []
     for i, c1 in enumerate(contours):

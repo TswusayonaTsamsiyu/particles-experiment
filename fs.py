@@ -20,8 +20,9 @@ CSV_PATH = ROOT_PATH / "csv"
 GRAPH_PATH = ROOT_PATH / "graphs"
 
 _COLUMNS = ("Width", "Length", "Angle", "Curvature", "Intensity", "Type",
+            "Area", "StartLength", "StartArea", "Duration",
             "StartIndex", "StartTime", "EndIndex", "EndTime",
-            "SnapshotIndex", "SnapshotTime", "Video", "Contour")
+            "SnapshotTrackIndex", "SnapshotIndex", "SnapshotTime", "Video", "Contour")
 
 
 def _is_video(path: Path) -> bool:
@@ -57,15 +58,18 @@ def _serialize_ref(ref: Ref) -> Tuple[int, float]:
 
 
 def _serialize_particle(particle: Particle) -> Tuple:
+    start = particle.start_snapshot
     return (particle.width, particle.length, particle.angle, particle.curvature, particle.intensity, 0,
+            particle.snapshot.contour.area, start.contour.length, start.contour.area, particle.end.index - particle.start.index,
             *_serialize_ref(particle.start), *_serialize_ref(particle.end),
-            *_serialize_ref(particle.snapshot.ref), particle.snapshot.ref.video,
+            particle.snapshot.index, *_serialize_ref(particle.snapshot.ref), particle.snapshot.ref.video,
             _serialize_contour(particle.snapshot.contour))
 
 
 def _parse_particle(row: namedtuple) -> Particle:
     return Particle((Ref(row.Video, row.StartIndex, row.StartTime), Ref(row.Video, row.EndIndex, row.EndTime)),
-                    Snapshot(Ref(row.Video, row.SnapshotIndex, row.SnapshotTime), _parse_contour(row.Contour)))
+                    Snapshot(Ref(row.Video, row.SnapshotIndex, row.SnapshotTime), row.SnapshotTrackIndex, _parse_contour(row.Contour)),
+                    Snapshot(Ref(row.Video, row.StartIndex, row.StartTime), 0, []))
 
 
 def save_particles(particles: Iterable[Particle], path: Path) -> None:

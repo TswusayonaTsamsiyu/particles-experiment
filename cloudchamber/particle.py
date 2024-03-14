@@ -13,6 +13,7 @@ from .processing import preprocess
 class Particle:
     range: Tuple[Ref, Ref]
     snapshot: Snapshot
+    start_snapshot: Snapshot
 
     @property
     def start(self) -> Ref:
@@ -52,7 +53,7 @@ class Particle:
     def from_track(cls, track: Track) -> "Particle":
         best_snapshot = max(track.snapshots, key=_snapshot_maximizer)
         # best_snapshot = track.snapshots[min(len(track.snapshots) - 1, 4)]
-        return cls((track.start.ref, track.end.ref), best_snapshot)
+        return cls((track.start.ref, track.end.ref), best_snapshot, track.start)
 
 
 def _snapshot_maximizer(snapshot: Snapshot) -> float:
