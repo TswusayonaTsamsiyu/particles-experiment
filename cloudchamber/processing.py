@@ -9,7 +9,9 @@ from .config import Config
 
 
 def preprocess(frame: Frame, config: Config) -> Frame:
-    return frame.with_image(img.grayscale(img.scale(frame.image, config.scale_factor)))
+    return frame.with_image(
+        img.grayscale(img.crop(img.scale(frame.image, config.scale_factor), *config.crop_box))
+    )
 
 
 def smooth(frame: Frame, config: Config) -> Frame:
