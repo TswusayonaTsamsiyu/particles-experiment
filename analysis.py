@@ -35,6 +35,7 @@ def _plot_hist(particles: Sequence[Particle], attr: Callable, label: str,
     plt.ylabel("No. Particles")
     title = _format_title(label)
     plt.title(title)
+    plt.grid()
     if save_path:
         print(f"Saving {title}")
         fig.savefig(save_path)
