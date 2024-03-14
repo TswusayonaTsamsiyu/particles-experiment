@@ -70,5 +70,5 @@ def analyze_video(path: Path, start: int = 0, stop: int = None, **config) -> Lis
     with Video(path) as video:
         return detect_tracks(video.iter_frames(
             start=video.index_at(start),
-            stop=video.index_at(stop)
+            stop=video.index_at(stop) if stop else None
         ), **config)
