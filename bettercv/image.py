@@ -88,7 +88,7 @@ def crop(image: Image,
          bottom: int = 0,
          left: int = 0,
          right: int = 0) -> Image:
-    return image[top:-bottom, left:-right]
+    return image[top:-bottom if bottom else None, left:-right if right else None]
 
 
 def scale(image: Image, factor: float) -> Image:
