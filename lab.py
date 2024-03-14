@@ -5,12 +5,11 @@ from argparse import ArgumentParser
 from cloudchamber.detection import analyze_video
 from cloudchamber.debugging import display_particles
 
-from fs import save_particles, load_particles, CSV_PATH
 from analysis import plot_histograms
 from fs import save_particles, load_particles, CSV_PATH, GRAPH_PATH
 
 START_TIME = 120
-NUM_SECONDS = 20
+NUM_SECONDS = 60 * 40
 
 
 def detect(path: Path) -> None:
