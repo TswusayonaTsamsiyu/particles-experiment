@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from functools import reduce
 from more_itertools import first
-from typing import Tuple, Iterable, Sequence, Generator
+from typing import Tuple, Iterable, Sequence, Generator, Union
 
 from .types import Image, Size
 
@@ -57,12 +57,18 @@ def mean(image: Image, mask: Image = None) -> Sequence[float]:
     return cv.mean(image, mask)
 
 
-def avg(images: Iterable[Image]) -> Image:
+def avg(images: Iterable[Image], std: bool = False) -> Union[Image, Tuple[Image, Image]]:
     avg_image = first(images)
+    avg_square = cv.pow(avg_image, 2)
     for index, image in enumerate(images):
         weight1 = 1.0 / (index + 1)
         weight2 = 1.0 - weight1
         avg_image = cv.addWeighted(image, weight1, avg_image, weight2, 0.0)
+        if std:
+            avg_square = cv.addWeighted(cv.pow(image, 2), weight1, avg_square, weight2, 0.0)
+    if std:
+        dev = cv.sqrt(cv.subtract(avg_square, cv.pow(avg_image, 2)))
+        return avg_image, dev
     return avg_image
 
 
