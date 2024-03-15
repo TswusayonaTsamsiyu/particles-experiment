@@ -56,5 +56,5 @@ def display_track(track: Track, **config) -> Track:
     with Video(track[0].ref.video) as video:
         for snapshot in track:
             image = draw_contours(abc(preprocess(video[snapshot.ref.index], config).image), [snapshot.contour])
-            handle_key_code(Window(image, title=f"#{snapshot.index}: {snapshot}").show())
+            display_image(image, f"#{snapshot.index}: {snapshot}")
     return track
